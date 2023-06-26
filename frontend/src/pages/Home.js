@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "react-bootstrap";
 
 function Home() {
-  return <Container>hen hao</Container>;
+  return <h1>SmartClass</h1>;
 }
 
 export default Home;
