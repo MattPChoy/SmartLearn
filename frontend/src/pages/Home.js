@@ -1,7 +1,8 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 
 function Home() {
-  return <div>Home</div>;
+  return <Container>hen hao</Container>;
 }
 
 export default Home;
