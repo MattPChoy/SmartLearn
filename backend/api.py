@@ -1,6 +1,6 @@
 from database import Database
 
-SUCCESS = "sucess"
+SUCCESS = "success"
 REASON = "reason"
 
 
@@ -20,15 +20,14 @@ class API:
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
             return self.handle_login_request(request_body)
-
-
-
+        if path[0] == "courses" and request_method == "GET":
+            return self.handle_get_courses(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
+        # Checks if id and password fields are in request
         if not ("id" in request_body and "password" in request_body):
-            # error
             return {SUCCESS: False, REASON: "Missing id or password."}
 
         id = request_body["id"]
@@ -36,6 +35,7 @@ class API:
 
         query = f"SELECT password FROM Users WHERE id == {id}"
         res = self.db.query(query)
+
         # expected res = [(password)]
         if (not res) or (len(res) != 1):
             return {SUCCESS: False, REASON: "This account is not registered."}
@@ -44,4 +44,30 @@ class API:
             return {SUCCESS: False, REASON: "Incorrect password."}
 
         return {SUCCESS: True}
+
+    def handle_get_courses(self, request_body):
+        if not ("student_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing id."}
+        
+        id = request_body["student_id"]
+        query = f"SELECT * FROM enrolments WHERE student_id == {id}"
+        res = self.db.query(query)
+
+        if len(res) == 0:
+            return {SUCCESS: False, REASON: "Student id not found in enrolments table."}
+
+        columns = self.db.get_column_names("enrolments")
+        print(res)
+        result = list()
+        for row in res:
+            result.append(dict(zip(columns, row)))
+        return {SUCCESS: True, "data": result}
+    
+    # Fields is fields for user: [id, fname, sname, password, email]
+    def add_user(self, fields):
+        id, fname, sname, password, email = fields
+
+
+        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
+
 
