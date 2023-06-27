@@ -33,9 +33,9 @@ class API:
         id = request_body["id"]
         password = request_body["password"]
 
-        query = f"SELECT password FROM Users WHERE id == {id}"
+        query = f"SELECT password FROM Users WHERE id == {id};"
         res = self.db.query(query)
-        
+
         # expected res = [(password)]
         if (not res) or (len(res) != 1):
             return {SUCCESS: False, REASON: "This account is not registered."}
@@ -44,4 +44,12 @@ class API:
             return {SUCCESS: False, REASON: "Incorrect password."}
 
         return {SUCCESS: True}
+
+    # Fields is fields for user: [id, fname, sname, password, email]
+    def add_user(self, fields):
+        id, fname, sname, password, email = fields
+
+
+        self.db.add(f'''INSERT INTO Users VALUES({id}, {fname}, {sname}, {password}, {email})''', save=True)
+
 
