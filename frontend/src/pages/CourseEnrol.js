@@ -8,22 +8,58 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import Headers from "../components/Header";
-
+import Modal from 'react-bootstrap/Modal';
 
 function CourseEnrol() {
   const courses = ['老干妈', 'ELEC2301', 'MATH6969']
   const semesters = [1,2,3]
   const year = 2023;
-  const [sem, setSem] = useState('');
+
+  const [semester, setSem] = useState('');
   const [course, setCourse] = useState('');
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const handleChange = (event) => {
     setSem(event.target.value);
   };
 
+  function InvalidCourse() {
+    return (
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header showButton>
+          <Modal.Title>Course does not exist!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Please select an existing course</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+
   const handleSubmit = () => {
-    console.log(sem)
-    console.log(course)
+
+
+    if (courses.includes(course)) {
+      // fetch("http://localhost:5000/api/auth", {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     courseID: course,
+      //     semNo: semester,
+      //   }),
+      //   headers: {'Content-Type':'application/json'},
+      // })
+      console.log(semester)
+      console.log(course)
+    } if(semester === ''){
+      handleShow()
+    } else {
+      handleShow()
+    }
   }
 
   return (
@@ -33,7 +69,7 @@ function CourseEnrol() {
       
       </Headers>
         <h1>Course Enrol</h1>
-        
+        <InvalidCourse />
         <AutoComplete
           className="w-100"
           disablePortal
@@ -49,7 +85,7 @@ function CourseEnrol() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={sem}
+            value={semester}
             label="Semester"
             onChange={handleChange}
           > 
@@ -59,6 +95,7 @@ function CourseEnrol() {
           </Select>
         </FormControl>
         <br/><br/>
+
         <Button className="btn btn-dark w-100" onClick={async () => await handleSubmit()}>Sign away your life</Button>
     </div>
         
