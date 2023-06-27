@@ -36,9 +36,6 @@ The following section of the report provides an analysis of the risks associated
 | ---- | ---------------------------------- |
 | AI   | Artificial Intelligence            |
 | GPT  | Generative Pre-trained Transformer |
-|      |
-
-
 
 # Project Requirements
 | ID  | System Name        | Subsystem         | Function                      | Priority | Description |
