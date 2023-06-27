@@ -19,3 +19,13 @@ code {
 .Course  h2{
   margin-left: 10px;
 }
+
+.CourseDescription {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.CourseDescription a {
+  text-decoration: none;
+}
