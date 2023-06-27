@@ -1,6 +1,6 @@
 from database import Database
 
-SUCCESS = "sucess"
+SUCCESS = "success"
 REASON = "reason"
 
 
@@ -19,16 +19,15 @@ class API:
         # json {success: bool, reason: str}
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
-            return self.handle_login_request(request_body)
-
-
-
+            res = self.handle_login_request(request_body)
+            print(res)
+            return res
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
+        # Checks if id and password fields are in request
         if not ("id" in request_body and "password" in request_body):
-            # error
             return {SUCCESS: False, REASON: "Missing id or password."}
 
         id = request_body["id"]
@@ -36,6 +35,7 @@ class API:
 
         query = f"SELECT password FROM Users WHERE id == {id}"
         res = self.db.query(query)
+        
         # expected res = [(password)]
         if (not res) or (len(res) != 1):
             return {SUCCESS: False, REASON: "This account is not registered."}

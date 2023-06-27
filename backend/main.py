@@ -4,7 +4,7 @@ from database import Database
 from api import API
 
 app = Flask(__name__)
-db = Database("./database.db")
+db = Database("./db.db")
 api = API(db)
 
 @app.route("/")
@@ -23,3 +23,5 @@ def api_endpoint(route):
     :return: Appropriate response data.
     """
     return jsonify(api.parse_response(request.method, request.json, route))
+
+app.run()
