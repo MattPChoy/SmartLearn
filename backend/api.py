@@ -19,9 +19,9 @@ class API:
         # json {success: bool, reason: str}
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
-            res = self.handle_login_request(request_body)
-            print(res)
-            return res
+            return self.handle_login_request(request_body)
+        if path[0] == "courses" and request_method == "GET":
+            return self.handle_get_courses(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -33,7 +33,7 @@ class API:
         id = request_body["id"]
         password = request_body["password"]
 
-        query = f"SELECT password FROM Users WHERE id == {id};"
+        query = f"SELECT password FROM Users WHERE id == {id}"
         res = self.db.query(query)
 
         # expected res = [(password)]
@@ -45,11 +45,29 @@ class API:
 
         return {SUCCESS: True}
 
+    def handle_get_courses(self, request_body):
+        if not ("student_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing id."}
+        
+        id = request_body["student_id"]
+        query = f"SELECT * FROM enrolments WHERE student_id == {id}"
+        res = self.db.query(query)
+
+        if len(res) == 0:
+            return {SUCCESS: False, REASON: "Student id not found in enrolments table."}
+
+        columns = self.db.get_column_names("enrolments")
+        print(res)
+        result = list()
+        for row in res:
+            result.append(dict(zip(columns, row)))
+        return {SUCCESS: True, "data": result}
+    
     # Fields is fields for user: [id, fname, sname, password, email]
     def add_user(self, fields):
         id, fname, sname, password, email = fields
 
 
-        self.db.add(f'''INSERT INTO Users VALUES({id}, {fname}, {sname}, {password}, {email})''', save=True)
+        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
 
