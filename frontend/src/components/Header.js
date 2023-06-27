@@ -20,9 +20,10 @@ function Header() {
           <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/login">Login</Nav.Link>
+            <Nav.Link href="/enrol">Enrol</Nav.Link>
             <NavDropdown title="Courses" id="basic-nav-dropdown">
-              {courses.map((course) => (
-                <NavDropdown.Item href={`/course/${course}`}>
+              {courses.map((course, index) => (
+                <NavDropdown.Item key={index} href={`/course/${course}`}>
                   {course}
                 </NavDropdown.Item>
               ))}
