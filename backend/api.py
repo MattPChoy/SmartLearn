@@ -32,7 +32,6 @@ class API:
 
         id = request_body["id"]
         password = request_body["password"]
-
         query = f"SELECT password FROM Users WHERE id == {id}"
         res = self.db.query(query)
         
