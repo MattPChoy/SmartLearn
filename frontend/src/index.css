@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.CourseCard {
+  margin-top: 10px;
+}
+
+.Course  h2{
+  margin-left: 10px;
+}
