@@ -53,7 +53,7 @@ class API:
             return {SUCCESS: False, REASON: "Missing id."}
 
         id = request_body["student_id"]
-        query = f"SELECT * FROM enrolments WHERE student_id == {id}"
+        query = f"SELECT * FROM Enrolments WHERE student_id == {id}"
         res = self.db.query(query)
 
         if len(res) == 0:
