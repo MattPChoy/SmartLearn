@@ -7,6 +7,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
+import Headers from "../components/Header";
 
 
 function CourseEnrol() {
@@ -24,11 +25,15 @@ function CourseEnrol() {
   };
 
   return (
+    
     <div class="w-25">
+      <Headers>
+      
+      </Headers>
         <h1>Course Enrol</h1>
         
         <AutoComplete
-        className="w-100"
+          className="w-100"
           disablePortal
           id="combo-box-demo"
           options={course}
@@ -49,8 +54,8 @@ function CourseEnrol() {
             {`Semester ${semester}-${year}`}</MenuItem>))}            
           </Select>
         </FormControl>
-
-        <Button className="btn btn-dark" onClick={buttonEvent}>Submit</Button>
+        <br/><br/>
+        <Button className="btn btn-dark w-100" onClick={buttonEvent}>Sign away your life</Button>
     </div>
         
     );
