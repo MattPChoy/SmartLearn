@@ -11,26 +11,24 @@ import Headers from "../components/Header";
 
 
 function CourseEnrol() {
-  const course = ['老干妈', 'ELEC2301', 'MATH6969']
+  const courses = ['老干妈', 'ELEC2301', 'MATH6969']
   const semesters = [1,2,3]
   const year = 2023;
   const [sem, setSem] = useState('');
-
-  const buttonEvent = () => {
-    console.log('hello')
-  }
+  const [course, setCourse] = useState('');
 
   const handleChange = (event) => {
     setSem(event.target.value);
   };
 
   const handleSubmit = () => {
-      
+    console.log(sem)
+    console.log(course)
   }
 
   return (
     
-    <div class="w-25">
+    <div className="w-25">
       <Headers>
       
       </Headers>
@@ -40,7 +38,9 @@ function CourseEnrol() {
           className="w-100"
           disablePortal
           id="combo-box-demo"
-          options={course}
+          options={courses}
+          value={course}
+          onInputChange={(e, newValue) => setCourse(newValue)}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Select Course" />} />
         <br/>
@@ -54,7 +54,7 @@ function CourseEnrol() {
             onChange={handleChange}
           > 
           
-          {semesters.map((semester, index) => (<MenuItem key={index} value={`${year}${semester}`}>
+          {semesters.map((semester, index) => (<MenuItem key={index} value={`${year}-${semester}`}>
             {`Semester ${semester}-${year}`}</MenuItem>))}            
           </Select>
         </FormControl>
