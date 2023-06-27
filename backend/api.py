@@ -46,18 +46,20 @@ class API:
         return {SUCCESS: True}
 
     def handle_get_courses(self, request_body):
-        if not ("id" in request_body):
+        if not ("student_id" in request_body):
             return {SUCCESS: False, REASON: "Missing id."}
         
-        id = request_body["id"]
+        id = request_body["student_id"]
         query = f"SELECT * FROM enrolments WHERE student_id == {id}"
         res = self.db.query(query)
 
-        if len(res) != 1:
+        if len(res) == 0:
             return {SUCCESS: False, REASON: "Student id not found in enrolments table."}
 
         columns = self.db.get_column_names("enrolments")
-        res = zip(res[0], columns)
-        return {SUCCESS: True, "data": res}
-    
+        print(res)
+        result = list()
+        for row in res:
+            result.append(dict(zip(columns, row)))
+        return {SUCCESS: True, "data": result}
     
