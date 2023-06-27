@@ -50,6 +50,6 @@ class API:
         id, fname, sname, password, email = fields
 
 
-        self.db.add(f'''INSERT INTO Users VALUES({id}, {fname}, {sname}, {password}, {email})''', save=True)
+        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
 
