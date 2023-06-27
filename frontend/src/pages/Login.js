@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { sha1 } from "crypto-hash";
 import {
   MDBBtn,
   MDBContainer,
@@ -12,6 +14,46 @@ import {
 } from "mdb-react-ui-kit";
 
 function Login() {
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const nav = useNavigate();
+
+  async function handleSubmit() {
+    try {
+      const hashPassword = await sha1(password);
+
+      fetch("http://localhost:5000/api/auth", {
+        method: "POST",
+        body: JSON.stringify({
+          id: id,
+          password: hashPassword,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.auth === true) {
+            // Successful log in
+            console.log("Good login")
+
+            nav("/");
+          }
+          else {
+            // Unsucessful log in
+            console.log("Bad login")
+          }
+        }).catch((error) => {
+          console.error('Error:', error);
+        });
+
+    } catch (e) {
+      console.log(e);
+      alert(e);
+    }
+  }
+
+
+
   return (
     <MDBContainer className="my-5">
       <MDBCard>
@@ -32,12 +74,16 @@ function Login() {
                 label="Email address"
                 id="form1"
                 type="email"
+                value={id}
+                onChange={(e) => setId(e.target.value)}
               />
               <MDBInput
                 wrapperClass="mb-4"
                 label="Password"
                 id="form2"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
 
               <div className="d-flex justify-content-between mx-4 mb-4">
@@ -50,7 +96,9 @@ function Login() {
                 <a href="!#">Forgot password?</a>
               </div>
 
-              <MDBBtn className="mb-4 w-100">Sign in</MDBBtn>
+              <MDBBtn className="mb-4 w-100" onClick={async () => await handleSubmit()}>
+                Sign in
+              </MDBBtn>
             </MDBCardBody>
           </MDBCol>
         </MDBRow>

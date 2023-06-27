@@ -19,7 +19,9 @@ class API:
         # json {success: bool, reason: str}
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
-            return self.handle_login_request(request_body)
+            res = self.handle_login_request(request_body)
+            print(res)
+            return res
         if path[0] == "courses" and request_method == "GET":
             return self.handle_get_courses(request_body)
 
@@ -30,10 +32,11 @@ class API:
         if not ("id" in request_body and "password" in request_body):
             return {SUCCESS: False, REASON: "Missing id or password."}
 
-        id = request_body["id"]
+        id = int(request_body["id"])
         password = request_body["password"]
 
         query = f"SELECT password FROM Users WHERE id == {id}"
+        print(query)
         res = self.db.query(query)
 
         # expected res = [(password)]
@@ -48,7 +51,7 @@ class API:
     def handle_get_courses(self, request_body):
         if not ("student_id" in request_body):
             return {SUCCESS: False, REASON: "Missing id."}
-        
+
         id = request_body["student_id"]
         query = f"SELECT * FROM enrolments WHERE student_id == {id}"
         res = self.db.query(query)
@@ -62,12 +65,10 @@ class API:
         for row in res:
             result.append(dict(zip(columns, row)))
         return {SUCCESS: True, "data": result}
-    
+
     # Fields is fields for user: [id, fname, sname, password, email]
     def add_user(self, fields):
         id, fname, sname, password, email = fields
-
-
         self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
 
