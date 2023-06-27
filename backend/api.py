@@ -19,9 +19,9 @@ class API:
         # json {success: bool, reason: str}
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
-            res = self.handle_login_request(request_body)
-            print(res)
-            return res
+            return self.handle_login_request(request_body)
+        if path[0] == "courses" and request_method == "GET":
+            return self.handle_get_courses(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -45,3 +45,19 @@ class API:
 
         return {SUCCESS: True}
 
+    def handle_get_courses(self, request_body):
+        if not ("id" in request_body):
+            return {SUCCESS: False, REASON: "Missing id."}
+        
+        id = request_body["id"]
+        query = f"SELECT * FROM enrolments WHERE student_id == {id}"
+        res = self.db.query(query)
+
+        if len(res) != 1:
+            return {SUCCESS: False, REASON: "Student id not found in enrolments table."}
+
+        columns = self.db.get_column_names("enrolments")
+        res = zip(res[0], columns)
+        return {SUCCESS: True, "data": res}
+    
+    
