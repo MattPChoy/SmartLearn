@@ -2,12 +2,14 @@ import React from "react";
 
 function Footer() {
   return (
-    <div className="Footer">
-      <p>
-        &copy; JoeMama |{" "}
-        <a href="mailto:mrbeast69@gmail.com">mrbeast69@gmail.com</a>
-      </p>
-    </div>
+    <footer>
+      <div className="text-center p-4 bg-dark text-light">
+        © 2023 Copyright:
+        <a className="text-reset fw-bold" href="https://bing.com/">
+          RichieIndustries
+        </a>
+      </div>
+    </footer>
   );
 }
 export default Footer;
