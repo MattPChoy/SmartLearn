@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import { Accordion, Container } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const temp_courses = [
   {
@@ -35,7 +36,10 @@ function Home() {
             <Accordion.Body>
               <div>
                 <h3>{name}</h3>
-                <h6>{coordinator}</h6>
+                <div className="CourseDescription">
+                  <h6>{coordinator}</h6>
+                  <Link to={`/course/${code}`}>View</Link>
+                </div>
               </div>
             </Accordion.Body>
           </Accordion.Item>
