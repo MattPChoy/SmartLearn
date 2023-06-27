@@ -24,6 +24,10 @@ function CourseEnrol() {
     setSem(event.target.value);
   };
 
+  const handleSubmit = () => {
+      
+  }
+
   return (
     
     <div class="w-25">
@@ -55,7 +59,7 @@ function CourseEnrol() {
           </Select>
         </FormControl>
         <br/><br/>
-        <Button className="btn btn-dark w-100" onClick={buttonEvent}>Sign away your life</Button>
+        <Button className="btn btn-dark w-100" onClick={async () => await handleSubmit()}>Sign away your life</Button>
     </div>
         
     );

@@ -14,7 +14,7 @@ function App() {
         <Route path="/enrol" element={<CourseEnrol/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/course/:courseId" element={<Course />} />
-        <Route path="*" element={<h1>dick Not Found</h1>} />
+        <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
     </BrowserRouter>
   );
