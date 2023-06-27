@@ -34,7 +34,7 @@ class Database:
         if save:
             connection.commit()
 
-    def query(self, query, json=False):
+    def query(self, query):
         """
         Use this method to query the database (obtain data from the database
         :param json: Boolean indicating whether to convert the query result to JSON format.
@@ -44,25 +44,9 @@ class Database:
         connection, cursor = self.get_dao()
 
         cursor.execute(query)
-        if not json:
-            return cursor.fetchall()
-        else:
-            # Want to convert to json format
-            res = cursor.fetchall()
-            entries = list()  # The data structure that is going to be converted to JSON format.
-            # We want to convert the result to a list of JSON objects.
+        return cursor.fetchall()
 
-            if "*" in query:
-                # We know that id, name, url, rating, prepTime, cookTime, totalTime, servings, blurb form the columns
-                for row in res:
-                    entry = dict()
-                    entry["id"], entry["name"], entry["url"], entry["rating"], entry["prepTime"], entry["cookTime"], \
-                        entry["totalTime"], entry["servings"], entry["blurb"], entry["image"] = row
-                    entries.append(entry)
-            else:
-                raise NotImplementedError("Not implemented yet.")
-            return entries
-    
+
     def get_column_names(self, table_name):
         res = self.query(f"PRAGMA table_info({table_name});")
         return [i[1] for i in res]
