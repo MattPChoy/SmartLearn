@@ -48,3 +48,4 @@ The following section of the report provides an analysis of the risks associated
 |     | Course Management  | Course Enrollment | Un-enroll in Course           | HIGH     |             |
 |     | Course Management  | Course Enrollment | View enrolled courses         | HIGH     |             |
 |     | Course Management  | Course Enrollment | View previous courses         | HIGH     |             |
+

@@ -25,15 +25,18 @@ The design goal of the SmartClass application is to largely simplify the process
 
 The main task of the AI education system is to convert pre-recorded videos to viable quiz questions to test students on their knowledge of the content. To accomplish this, the appropriate AI software must be considered. Other conditions including conditions of technology and operating environment must also be considered. 
 
-To complete this, the SmartClass application will need to 
+To complete this, the SmartClass application will need to (1) Convert the pre-recorded video to legible text. (2) Convert text to relevant and helpful questions and also retrieve answers using AI. (3) Answers to the questions are evaluated by AI if incorrect and relevant feedback is given. (4) If the student constantly answers the question incorrectly, the student will be directed to a prerequisite class or lesson to improve/re-learn the required knowledge.
+
+The lessons can be designed using a "knowledge network" by connecting relevant prerequisite knowledge to each question.
 
 ## Design strategy
 The system is based on React + Python Flask + SQLite3 to achieve front-end, back-end and data separation, to create a safe MVC (Model Viewer Controller) software architectural pattern.
 
 ## Conditions and restrictions
-This document is for category descriptions and listings only, see requirements-spec
+This document is for category descriptions and listings only, see requirements-spec.
 
 ## Design principles
+1. Scalability: 
 
 # 6. Interface design
 
