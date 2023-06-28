@@ -8,6 +8,8 @@ CURR_YEAR = 2023
 CURR_SEMESTER = 2
 UPLOAD_DIRECTORY = "./videos"
 
+REGISTER_FIELDS = ["id", "firstname", "surname", "password", "email"]
+
 
 class API:
     def __init__(self, db: Database) -> None:
@@ -37,6 +39,11 @@ class API:
             return self.get_currently_enrolled(request_body)
         if _path[0] == "uploadVideo" and request_method == "POST":
             return self.upload_video(request_body, path)
+        if path[0] == "enrol" and request_method == "POST":
+            return self.enrol(request_body)
+        if path[0] == "unenrol" and request_method == "POST":
+            return self.unenrol(request_body)
+
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
@@ -64,9 +71,79 @@ class API:
         return {SUCCESS: True}
 
     def register(self, request_body):
+        # Checks all fields are found in request
+        for field in REGISTER_FIELDS:
+            if field not in request_body:
+                return {SUCCESS: False, REASON: f"Missing {field} in request."}
+
         id, fname, sname, password, email = request_body["id"], request_body["firstname"], request_body["surname"], \
             request_body["password"], request_body["email"]
+
+        if not self.student_in_db(id):
+            return {SUCCESS: False, REASON: "Student is already registered."}
+
         self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
+        return {SUCCESS: True}
+
+    def enrol(self, request_body):
+        # Checks if id and password fields are in request
+        if not ("student_id" in request_body and "offering_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student or offering id"}
+
+        try:
+            student_id = int(request_body["student_id"])
+            offering_id = int(request_body["offering_id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
+
+        if not self.student_in_db(student_id):
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+
+        if not self.offering_in_db(offering_id):
+            return {SUCCESS: False, REASON: "Offering id not found in database."}
+
+        if self.is_enrolled(student_id, offering_id):
+            return {SUCCESS: False, REASON: "Student is already enrolled."}
+
+        self.db.add(f'''INSERT INTO Enrolments VALUES({student_id}, {offering_id})''', save=True)
+        return {SUCCESS: True}
+
+
+    def student_in_db(self, student_id):
+        res = self.db.query(f"""SELECT id FROM Users WHERE {student_id} == id""")
+        return res and res[0]
+
+    def offering_in_db(self, offering_id):
+        res = self.db.query(f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
+        return res and res[0]
+
+    def is_enrolled(self, student_id, offering_id):
+        res = self.db.query(f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
+        return res and res[0][0]
+
+    def unenrol(self, request_body):
+        # Checks if id and password fields are in request
+        if not ("student_id" in request_body and "offering_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student or offering id"}
+
+        try:
+            student_id = int(request_body["student_id"])
+            offering_id = int(request_body["offering_id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
+
+        if not self.student_in_db(student_id):
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+
+        if not self.offering_in_db(offering_id):
+            return {SUCCESS: False, REASON: "Offering id not found in database."}
+
+        if not self.is_enrolled(student_id, offering_id):
+            return {SUCCESS: False, REASON: "Student is not enrolled"}
+
+        self.db.query(f'''DELETE FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id''')
+        return {SUCCESS: True}
+
 
     def get_courses(self, request_body):
         res = self.db.query(f"SELECT Offerings.year, Offerings.semester, Courses.name, Coordinators.firstname, Coordinators.lastname FROM Enrolments \
@@ -75,7 +152,7 @@ class API:
             JOIN Courses on Courses.id=Offerings.course_id \
             JOIN Coordinators on Coordinators.id=Offerings.coordinator_id \
             WHERE Enrolments.student_id={request_body['student_id']}")
-        
+
         result = list()
         col_names = ["year", "semester", "course_name", "coordinator_firstname", "coordinator_lastname"]
         for row in res:
