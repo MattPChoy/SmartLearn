@@ -9,12 +9,14 @@ function DataTable({ data }) {
             <th key={key}>{key}</th>
           ))}
         </tr>
-        {data.map((row) => (
-          <tr>
-            {Object.values(row).map((value, index) => (
-              <td key={index}>{value}</td>
-            ))}
-          </tr>
+        {data.map((course) => (
+          course.map((row) =>
+            <tr>
+              {Object.values(row).map((value, index) => (
+                <td key={index}>{value}</td>
+              ))}
+            </tr>
+          )
         ))}
       </table>
     </div>

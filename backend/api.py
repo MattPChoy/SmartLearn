@@ -1,7 +1,14 @@
 from database import Database
+import os
+from flask import request
 
 SUCCESS = "success"
 REASON = "reason"
+CURR_YEAR = 2023
+CURR_SEMESTER = 2
+UPLOAD_DIRECTORY = "./videos"
+
+REGISTER_FIELDS = ["id", "firstname", "surname", "password", "email"]
 
 
 class API:
@@ -14,22 +21,30 @@ class API:
         :param args: The arguments passed to the API.
         :return: The result of the request.
         """
-        path = path.split("/")
+        _path = path.split("/")
+        _path = _path[0].split("?")
 
         # json {success: bool, reason: str}
         # path = [auth, ]
-        if path[0] == "auth" and request_method == "POST":
+        print(_path)
+        if _path[0] == "auth" and request_method == "POST":
             res = self.handle_login_request(request_body)
-            print(res)
             return res
-        if path[0] == "courses" and request_method == "GET":
+        if _path[0] == "courses" and request_method == "GET":
             return self.get_courses(request_body)
-        if path[0] == "register" and request_method == "POST":
+        if _path[0] == "register" and request_method == "POST":
             return self.register(request_body)
+        if _path[0] == "availableCourses" and request_method == "GET":
+            return self.get_available_courses()
+        if _path[0] == "currentlyEnrolled" and request_method == "GET":
+            print(request_body)
+            return self.get_currently_enrolled(_path)
+        if _path[0] == "uploadVideo" and request_method == "POST":
+            return self.upload_video(request_body, path)
         if path[0] == "enrol" and request_method == "POST":
-            res = self.enrol(request_body)
-            print(res)
-            return res
+            return self.enrol(request_body)
+        if path[0] == "unenrol" and request_method == "POST":
+            return self.unenrol(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -38,14 +53,17 @@ class API:
         if not ("id" in request_body and "password" in request_body):
             return {SUCCESS: False, REASON: "Missing id or password."}
 
-        id = int(request_body["id"])
+        try:
+            id = int(request_body["id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Invalid id type when converting to integer datatype."}
         password = request_body["password"]
 
         query = f"SELECT password FROM Users WHERE id == {id}"
         print(query)
         res = self.db.query(query)
 
-        # expected res = [(password)]
+            # expected res = [(password)]
         if (not res) or (len(res) != 1):
             return {SUCCESS: False, REASON: "This account is not registered."}
 
@@ -55,20 +73,24 @@ class API:
         return {SUCCESS: True}
 
     def register(self, request_body):
+        # Checks all fields are found in request
+        for field in REGISTER_FIELDS:
+            if field not in request_body:
+                return {SUCCESS: False, REASON: f"Missing {field} in request."}
+
         id, fname, sname, password, email = request_body["id"], request_body["firstname"], request_body["surname"], \
             request_body["password"], request_body["email"]
-        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
-    """
-    Request body should be in form {
-        student_id: str
-        org_id: str
-    }
-    """
+        if not self.student_in_db(id):
+            return {SUCCESS: False, REASON: "Student is already registered."}
+
+        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
+        return {SUCCESS: True}
+
     def enrol(self, request_body):
         # Checks if id and password fields are in request
         if not ("student_id" in request_body and "offering_id" in request_body):
-            return {SUCCESS: False, REASON: "Missing student or org id"}
+            return {SUCCESS: False, REASON: "Missing student or offering id"}
 
         try:
             student_id = int(request_body["student_id"])
@@ -95,14 +117,34 @@ class API:
 
     def offering_in_db(self, offering_id):
         res = self.db.query(f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
-        print(f"Res: {res}")
-
         return res and res[0]
 
     def is_enrolled(self, student_id, offering_id):
         res = self.db.query(f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
         return res and res[0][0]
 
+    def unenrol(self, request_body):
+        # Checks if id and password fields are in request
+        if not ("student_id" in request_body and "offering_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student or offering id"}
+
+        try:
+            student_id = int(request_body["student_id"])
+            offering_id = int(request_body["offering_id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
+
+        if not self.student_in_db(student_id):
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+
+        if not self.offering_in_db(offering_id):
+            return {SUCCESS: False, REASON: "Offering id not found in database."}
+
+        if not self.is_enrolled(student_id, offering_id):
+            return {SUCCESS: False, REASON: "Student is not enrolled"}
+
+        self.db.query(f'''DELETE FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id''')
+        return {SUCCESS: True}
 
 
     def get_courses(self, request_body):
@@ -119,8 +161,59 @@ class API:
             result.append(dict(zip(col_names, row)))
 
         return {SUCCESS: True, "data": result}
+    
+    def get_available_courses(self):
+        query=f"""
+            SELECT Courses.name, Offerings.year, Offerings.semester, Coordinators.firstname as CoordinatorFirstName, 
+        Coordinators.lastname as CoordinatorLastName, Organisations.name as OrganisationName
+        FROM Offerings
+        JOIN Courses ON Offerings.course_id=Courses.id
+        JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
+        JOIN Organisations ON Organisations.id=Courses.org_id
+        WHERE year={CURR_YEAR} AND semester={CURR_SEMESTER}"""
+        print(query)
+        res = self.db.query(query)
+        print(res)
 
+        col = ["course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        _res = list()
+        for row in res:
+            _res.append(dict(zip(col, row)))
+        return _res
 
+    def upload_video(self, request_body, path):
+        """Upload a file."""
 
+        if "/" in path:
+            # Return 400 BAD REQUEST
+            return {SUCCESS: False, REASON: "no slashes allowed in the filename"}
+        with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
+            fp.write(request.data)
+        return {SUCCESS: True}
 
+    def get_currently_enrolled(self, path):
+        print(path)
+        #extract student_id from path
+        vars = path.split("?student_id=")
 
+        print(vars)
+        if len(vars) != 2:
+            return {SUCCESS: False, REASON: "Missing student_id."}
+        
+        id = vars[1]
+
+        if not self.student_in_db(id):
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+
+        res = self.db.query(f"""
+            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments 
+            JOIN Offerings ON Enrolments.offering_id=Offerings.id
+            JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
+            JOIN Courses ON Offerings.course_id=Courses.id
+            WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
+        
+        cols = ["coordinator_firstname", "coordinator_lastname", "course_name", "course_desc"]
+        _res = list()
+        for row in res:
+            _res.append(dict(zip(cols, row)))
+        return {SUCCESS:True, "data":_res}
