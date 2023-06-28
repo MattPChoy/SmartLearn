@@ -23,7 +23,6 @@ def api_endpoint(route):
     :param route: String representing the path with $ipAddress:$port/api/ stripped off.
     :return: Appropriate response data.
     """
-    print("hi")
     return jsonify(api.parse_response(request.method, request.json, route))
 
 app.run()
