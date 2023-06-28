@@ -71,4 +71,10 @@ class API:
         id, fname, sname, password, email = fields
         self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
+    def get_user_courses(self, request_body):
+        if not ("student_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student id field."}
+        
+        
+
 
