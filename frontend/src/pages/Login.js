@@ -17,10 +17,12 @@ import { useAuth } from "../helper/AuthContext";
 function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
   const { login } = useAuth();
 
   async function handleSubmit() {
+    setLoading(true);
     try {
       //const hashPassword = await sha1(password);
       const hashPassword = password;
@@ -98,7 +100,8 @@ function Login() {
 
               <MDBBtn
                 className="mb-4 w-100"
-                onClick={async () => await handleSubmit()}
+                onClick={handleSubmit}
+                active={!loading}
               >
                 Sign in
               </MDBBtn>
