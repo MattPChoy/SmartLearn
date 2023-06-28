@@ -24,6 +24,8 @@ class API:
             return res
         if path[0] == "courses" and request_method == "GET":
             return self.get_courses(request_body)
+        if path[0] == "register" and request_method == "POST":
+            return self.register(request_body)
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
@@ -47,38 +49,12 @@ class API:
 
         return {SUCCESS: True}
 
-    # def handle_get_courses(self, request_body):
-    #     if not ("student_id" in request_body):
-    #         return {SUCCESS: False, REASON: "Missing id."}
-
-    #     id = request_body["student_id"]
-    #     query = f"SELECT * FROM Enrolments WHERE student_id == {id}"
-    #     res = self.db.query(query)
-
-    #     if len(res) == 0:
-    #         return {SUCCESS: False, REASON: "Student id not found in enrolments table."}
-
-    #     columns = self.db.get_column_names("enrolments")
-    #     print(res)
-    #     result = list()
-    #     for row in res:
-    #         result.append(dict(zip(columns, row)))
-    #     return {SUCCESS: True, "data": result}
-
-    # Fields is fields for user: [id, fname, sname, password, email]
-    def add_user(self, fields):
-        id, fname, sname, password, email = fields
+    def register(self, request_body):
+        id, fname, sname, password, email = request_body["id"], request_body["firstname"], request_body["surname"], \
+            request_body["password"], request_body["email"]
         self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
     def get_courses(self, request_body):
-        # if not ("student_id" in request_body):
-        #     return {SUCCESS: False, REASON: "Missing student id field."}
-        
-        # res = self.db.query(f"SELECT * FROM Users WHERE id == {request_body['student_id']}")
-
-        # if (len(res) == 0):
-        #     re    turn {SUCCESS: False, REASON: "Student id not recorded."}
-        
         res = self.db.query(f"SELECT Offerings.year, Offerings.semester, Courses.name, Coordinators.firstname, Coordinators.lastname FROM Enrolments \
             JOIN Users ON Enrolments.student_id=Users.id \
             JOIN Offerings on Offerings.id=Enrolments.offering_id \
