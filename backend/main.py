@@ -16,6 +16,12 @@ def main():
 def not_found(e):
     return app.send_static_file("index.html")
 
+@app.route("/api/currentlyEnrolled", methods=["GET"])
+def get_currently_enrolled():
+    args = request.args
+    return jsonify(api.get_currently_enrolled(args["id"]))
+
+
 @app.route("/api/<path:route>", methods=["GET", "POST"])
 def api_endpoint(route):
     """

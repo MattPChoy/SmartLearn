@@ -22,7 +22,7 @@ class API:
         :return: The result of the request.
         """
         _path = path.split("/")
-        _path = _path[0].split("?")
+  
 
         # json {success: bool, reason: str}
         # path = [auth, ]
@@ -38,7 +38,7 @@ class API:
             return self.get_available_courses()
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             print(request_body)
-            return self.get_currently_enrolled(_path)
+            return self.get_currently_enrolled(_path[1])
         if _path[0] == "uploadVideo" and request_method == "POST":
             return self.upload_video(request_body, path)
         if path[0] == "enrol" and request_method == "POST":
@@ -191,16 +191,8 @@ class API:
             fp.write(request.data)
         return {SUCCESS: True}
 
-    def get_currently_enrolled(self, path):
-        print(path)
-        #extract student_id from path
-        vars = path.split("?student_id=")
-
-        print(vars)
-        if len(vars) != 2:
-            return {SUCCESS: False, REASON: "Missing student_id."}
-        
-        id = vars[1]
+    def get_currently_enrolled(self, id):
+    
 
         if not self.student_in_db(id):
             return {SUCCESS: False, REASON: "Student id not found in database."}

@@ -18,14 +18,15 @@ function Home() {
       } else {
         try {
           const res = await fetch(
-            `http://localhost:5000/api/currentlyEnrolled?student_id=${currentUser}`,
+            `http://localhost:5000/api/currentlyEnrolled?id=2`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
             }
           );
           console.log(res);
-          const resObj = res.json();
+          const resObj = await res.json();
+          console.log(resObj);
           if (resObj.success === true) {
             setCourses(resObj.data);
             setLoading(false);
@@ -72,10 +73,12 @@ function Home() {
         <Container>
           {courses.map((course) => (
             <CourseCard
-              key={course.code}
-              code={course.code}
-              name={course.name}
-              coordinator={course.coordinator}
+              key={course.course_name}
+              code={course.course_name}
+              name={course.course_desc}
+              coordinator={
+                course.coordinator_firstname + " " + course.coordinator_lastname
+              }
             />
           ))}
         </Container>
