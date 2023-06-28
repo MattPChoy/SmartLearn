@@ -2,6 +2,8 @@ from database import Database
 
 SUCCESS = "success"
 REASON = "reason"
+CURR_YEAR = 2023
+CURR_SEMESTER = 2
 
 
 class API:
@@ -26,6 +28,8 @@ class API:
             return self.get_courses(request_body)
         if path[0] == "register" and request_method == "POST":
             return self.register(request_body)
+        if path[0] == "availableCourses" and request_method == "GET":
+            return self.get_available_courses()
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
@@ -40,7 +44,7 @@ class API:
         print(query)
         res = self.db.query(query)
 
-        # expected res = [(password)]
+            # expected res = [(password)]
         if (not res) or (len(res) != 1):
             return {SUCCESS: False, REASON: "This account is not registered."}
 
@@ -68,6 +72,25 @@ class API:
             result.append(dict(zip(col_names, row)))
 
         return {SUCCESS: True, "data": result}
+    
+    def get_available_courses(self):
+        query=f"""
+            SELECT Courses.name, Offerings.year, Offerings.semester, Coordinators.firstname as CoordinatorFirstName, 
+        Coordinators.lastname as CoordinatorLastName, Organisations.name as OrganisationName
+        FROM Offerings
+        JOIN Courses ON Offerings.course_id=Courses.id
+        JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
+        JOIN Organisations ON Organisations.id=Courses.org_id
+        WHERE year={CURR_YEAR} AND semester={CURR_SEMESTER}"""
+        print(query)
+        res = self.db.query(query)
+        print(res)
+
+        col = ["course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        _res = list()
+        for row in res:
+            _res.append(dict(zip(col, row)))
+        return _res
 
 
 
