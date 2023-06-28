@@ -19,17 +19,13 @@ class API:
         # json {success: bool, reason: str}
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
-            res = self.handle_login_request(request_body)
-            print(res)
-            return res
+            return self.handle_login_request(request_body)
         if path[0] == "courses" and request_method == "GET":
             return self.get_courses(request_body)
         if path[0] == "register" and request_method == "POST":
             return self.register(request_body)
         if path[0] == "enrol" and request_method == "POST":
-            res = self.enrol(request_body)
-            print(res)
-            return res
+            return self.enrol(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -59,12 +55,6 @@ class API:
             request_body["password"], request_body["email"]
         self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
-    """
-    Request body should be in form {
-        student_id: str
-        org_id: str
-    }
-    """
     def enrol(self, request_body):
         # Checks if id and password fields are in request
         if not ("student_id" in request_body and "offering_id" in request_body):
@@ -95,8 +85,6 @@ class API:
 
     def offering_in_db(self, offering_id):
         res = self.db.query(f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
-        print(f"Res: {res}")
-
         return res and res[0]
 
     def is_enrolled(self, student_id, offering_id):
