@@ -66,12 +66,32 @@ Our software will follow the Nielsen's Heuristic Design Heuristics. (REFERENCE: 
 
 # 4. Overall system architecture
 
+## 4.1 Functional architecture
+
+## 4.2 Technical architecture
+
+## 4.3 Deployable architecture
+
+## 4.4 Related system integration relationship
+
+### 4.4.1 Student
+
+### 4.4.2 Teacher
+
+# 5. Database design
+
+## 5.1 Database environment description
+
+## 5.2 Database naming rules
+
+## 5.3 Database table structure description
+
 # 6. Interface design
 
-## External interface
+## 6.1 External interface
 Our external interface involves: (1) The teacher, who can upload videos, and edit transcripts and questions that may have generative mistakes from the AI and, (2) The students who can: for any lesson uploaded by teachers, be able to answer questions and receive feedback.
 
-## Internal interface
+## 6.2 Internal interface
 The front-end application module of the attendance system interacts with the back-end service using REST APIs, using the internal interface access mode. This mode realizes the separation and decoupling of front and back office.
 
 
