@@ -23,6 +23,7 @@ class API:
         """
         _path = path.split("/")
 <<<<<<< HEAD
+<<<<<<< HEAD
         _path = _path[0].split("?")
 
         # json {success: bool, reason: str}
@@ -30,6 +31,14 @@ class API:
         print(_path)
         if _path[0] == "auth" and request_method == "POST":
             res = self.handle_login_request(request_body)
+=======
+
+        # json {success: bool, reason: str}
+        # path = [auth, ]
+        if _path[0] == "auth" and request_method == "POST":
+            res = self.handle_login_request(request_body)
+            print(res)
+>>>>>>> 4c1b79f7949fea50d3ba8bb5ba9609208c349f87
 =======
 
         # json {success: bool, reason: str}
@@ -47,8 +56,12 @@ class API:
             return self.get_available_courses()
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
 <<<<<<< HEAD
+<<<<<<< HEAD
             print(request_body)
             return self.get_currently_enrolled(_path)
+=======
+            return self.get_currently_enrolled(request_body)
+>>>>>>> 4c1b79f7949fea50d3ba8bb5ba9609208c349f87
 =======
             return self.get_currently_enrolled(request_body)
 >>>>>>> 4c1b79f7949fea50d3ba8bb5ba9609208c349f87
@@ -205,6 +218,7 @@ class API:
         return {SUCCESS: True}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def get_currently_enrolled(self, path):
         print(path)
         #extract student_id from path
@@ -220,6 +234,13 @@ class API:
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
        
+=======
+    def get_currently_enrolled(self, request_body):
+
+        if not ("student_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student_id."}
+        id = request_body["student_id"]
+>>>>>>> 4c1b79f7949fea50d3ba8bb5ba9609208c349f87
 =======
     def get_currently_enrolled(self, request_body):
 
