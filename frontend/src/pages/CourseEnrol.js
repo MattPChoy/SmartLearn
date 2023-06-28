@@ -17,9 +17,13 @@ function CourseEnrol() {
 
   const [semester, setSem] = useState('');
   const [course, setCourse] = useState('');
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [courseShow, setCourseShow] = useState(false);
+  const [semShow, setSemShow] = useState(false);
+
+  const closeInvalidSem = () => setSemShow(false);
+  const showInvalidSem = () => setSemShow(true);
+  const closeInvalidCourse = () => setCourseShow(false);
+  const showInvalidCourse = () => setCourseShow(true);
 
   const handleChange = (event) => {
     setSem(event.target.value);
@@ -27,13 +31,29 @@ function CourseEnrol() {
 
   function InvalidCourse() {
     return (
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={courseShow} onHide={closeInvalidCourse}>
         <Modal.Header showButton>
           <Modal.Title>Course does not exist!</Modal.Title>
         </Modal.Header>
         <Modal.Body>Please select an existing course</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={closeInvalidCourse}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+
+  function InvalidSemester() {
+    return (
+      <Modal show={semShow} onHide={closeInvalidSem}>
+        <Modal.Header showButton>
+          <Modal.Title>Invalid semester!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Please select a value semester</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeInvalidSem}>
             Close
           </Button>
         </Modal.Footer>
@@ -53,11 +73,14 @@ function CourseEnrol() {
       // })
       console.log(semester)
       console.log(course)
-    } if(semester === ''){
-      handleShow()
-    } else {
-      handleShow()
-    }
+    } 
+    
+    if(!courses.includes(course)) {
+      showInvalidCourse()
+    } else if(semester.length===0){
+      console.log(semester.length)
+      showInvalidSem()
+    } 
   }
 
   return (
@@ -67,6 +90,7 @@ function CourseEnrol() {
       </Headers>
         <h1>Course Enrol</h1>
         <InvalidCourse />
+        <InvalidSemester />
         <AutoComplete
           className="w-100"
           disablePortal
