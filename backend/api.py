@@ -1,9 +1,12 @@
 from database import Database
+import os
+from flask import request
 
 SUCCESS = "success"
 REASON = "reason"
 CURR_YEAR = 2023
 CURR_SEMESTER = 2
+UPLOAD_DIRECTORY = "./videos"
 
 
 class API:
@@ -16,20 +19,22 @@ class API:
         :param args: The arguments passed to the API.
         :return: The result of the request.
         """
-        path = path.split("/")
+        _path = path.split("/")
 
         # json {success: bool, reason: str}
         # path = [auth, ]
-        if path[0] == "auth" and request_method == "POST":
+        if _path[0] == "auth" and request_method == "POST":
             res = self.handle_login_request(request_body)
             print(res)
             return res
-        if path[0] == "courses" and request_method == "GET":
+        if _path[0] == "courses" and request_method == "GET":
             return self.get_courses(request_body)
-        if path[0] == "register" and request_method == "POST":
+        if _path[0] == "register" and request_method == "POST":
             return self.register(request_body)
-        if path[0] == "availableCourses" and request_method == "GET":
+        if _path[0] == "availableCourses" and request_method == "GET":
             return self.get_available_courses()
+        if _path[0] == "uploadVideo" and request_method == "POST":
+            return self.upload_video(request_body, path)
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
@@ -92,7 +97,15 @@ class API:
             _res.append(dict(zip(col, row)))
         return _res
 
+    def upload_video(self, request_body, path):
+        """Upload a file."""
 
+        if "/" in path:
+            # Return 400 BAD REQUEST
+            return {SUCCESS: False, REASON: "no slashes allowed in the filename"}
+        with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
+            fp.write(request.data)
+        return {SUCCESS: True}
 
 
 
