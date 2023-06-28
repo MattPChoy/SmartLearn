@@ -18,7 +18,7 @@ function Home() {
       } else {
         try {
           const res = await fetch(
-            `http://localhost:5000/api/currentlyEnrolled?id=2`,
+            `http://localhost:5000/api/currentlyEnrolled?id=${currentUser}`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
