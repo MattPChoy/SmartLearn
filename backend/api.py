@@ -19,11 +19,13 @@ class API:
         # json {success: bool, reason: str}
         # path = [auth, ]
         if path[0] == "auth" and request_method == "POST":
-            res = self.handle_login_request(request_body)
-            print(res)
-            return res
+            return self.handle_login_request(request_body)
         if path[0] == "courses" and request_method == "GET":
-            return self.handle_get_courses(request_body)
+            return self.get_courses(request_body)
+        if path[0] == "register" and request_method == "POST":
+            return self.register(request_body)
+        if path[0] == "enrol" and request_method == "POST":
+            return self.enrol(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -48,27 +50,65 @@ class API:
 
         return {SUCCESS: True}
 
-    def handle_get_courses(self, request_body):
-        if not ("student_id" in request_body):
-            return {SUCCESS: False, REASON: "Missing id."}
+    def register(self, request_body):
+        id, fname, sname, password, email = request_body["id"], request_body["firstname"], request_body["surname"], \
+            request_body["password"], request_body["email"]
+        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
 
-        id = request_body["student_id"]
-        query = f"SELECT * FROM Enrolments WHERE student_id == {id}"
-        res = self.db.query(query)
+    def enrol(self, request_body):
+        # Checks if id and password fields are in request
+        if not ("student_id" in request_body and "offering_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student or org id"}
 
-        if len(res) == 0:
-            return {SUCCESS: False, REASON: "Student id not found in enrolments table."}
+        try:
+            student_id = int(request_body["student_id"])
+            offering_id = int(request_body["offering_id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
 
-        columns = self.db.get_column_names("enrolments")
-        print(res)
+        if not self.student_in_db(student_id):
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+
+        if not self.offering_in_db(offering_id):
+            return {SUCCESS: False, REASON: "Offering id not found in database."}
+
+        if self.is_enrolled(student_id, offering_id):
+            return {SUCCESS: False, REASON: "Student is already enrolled."}
+
+        self.db.add(f'''INSERT INTO Enrolments VALUES({student_id}, {offering_id})''', save=True)
+        return {SUCCESS: True}
+
+
+    def student_in_db(self, student_id):
+        res = self.db.query(f"""SELECT id FROM Users WHERE {student_id} == id""")
+        return res and res[0]
+
+    def offering_in_db(self, offering_id):
+        res = self.db.query(f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
+        return res and res[0]
+
+    def is_enrolled(self, student_id, offering_id):
+        res = self.db.query(f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
+        return res and res[0][0]
+
+
+
+    def get_courses(self, request_body):
+        res = self.db.query(f"SELECT Offerings.year, Offerings.semester, Courses.name, Coordinators.firstname, Coordinators.lastname FROM Enrolments \
+            JOIN Users ON Enrolments.student_id=Users.id \
+            JOIN Offerings on Offerings.id=Enrolments.offering_id \
+            JOIN Courses on Courses.id=Offerings.course_id \
+            JOIN Coordinators on Coordinators.id=Offerings.coordinator_id \
+            WHERE Enrolments.student_id={request_body['student_id']}")
+
         result = list()
+        col_names = ["year", "semester", "course_name", "coordinator_firstname", "coordinator_lastname"]
         for row in res:
-            result.append(dict(zip(columns, row)))
+            result.append(dict(zip(col_names, row)))
+
         return {SUCCESS: True, "data": result}
 
-    # Fields is fields for user: [id, fname, sname, password, email]
-    def add_user(self, fields):
-        id, fname, sname, password, email = fields
-        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
+
+
 
 
