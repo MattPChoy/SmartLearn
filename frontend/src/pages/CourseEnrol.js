@@ -11,7 +11,7 @@ import Headers from "../components/Header";
 import Modal from 'react-bootstrap/Modal';
 
 function CourseEnrol() {
-  const courses = ['老干妈', 'ELEC2301', 'MATH6969']
+  const courses = ['DECO2500', 'ELEC2301', 'MATH6969']
   const semesters = [1,2,3]
   const year = 2023;
 
@@ -42,8 +42,6 @@ function CourseEnrol() {
   }
 
   const handleSubmit = () => {
-
-
     if (courses.includes(course)) {
       // fetch("http://localhost:5000/api/auth", {
       //   method: "POST",
@@ -63,7 +61,6 @@ function CourseEnrol() {
   }
 
   return (
-    
     <div className="w-25">
       <Headers>
       
@@ -90,15 +87,14 @@ function CourseEnrol() {
             onChange={handleChange}
           > 
           
-          {semesters.map((semester, index) => (<MenuItem key={index} value={`${year}-${semester}`}>
-            {`Semester ${semester}-${year}`}</MenuItem>))}            
+          {semesters.map((semester, index) => (<MenuItem key={index} value={`${year}; ${semester}`}>
+            {`Semester ${semester}; ${year}`}</MenuItem>))}            
           </Select>
         </FormControl>
         <br/><br/>
 
         <Button className="btn btn-dark w-100" onClick={async () => await handleSubmit()}>Sign away your life</Button>
     </div>
-        
     );
 }
 
