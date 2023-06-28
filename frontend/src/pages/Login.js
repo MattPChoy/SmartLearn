@@ -12,47 +12,47 @@ import {
   MDBInput,
   MDBCheckbox,
 } from "mdb-react-ui-kit";
+import { useAuth } from "../helper/AuthContext";
 
 function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const nav = useNavigate();
+  const { login } = useAuth();
 
   async function handleSubmit() {
     try {
-      const hashPassword = await sha1(password);
-
+      //const hashPassword = await sha1(password);
+      const hashPassword = password;
       fetch("http://localhost:5000/api/auth", {
         method: "POST",
         body: JSON.stringify({
           id: id,
           password: hashPassword,
         }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data.auth === true) {
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success === true) {
             // Successful log in
-            console.log("Good login")
-
+            console.log("Good login");
+            login(id);
             nav("/");
-          }
-          else {
+          } else {
             // Unsucessful log in
-            console.log("Bad login")
+            console.log("Bad login");
+            console.log(data);
           }
-        }).catch((error) => {
-          console.error('Error:', error);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
         });
-
     } catch (e) {
       console.log(e);
       alert(e);
     }
   }
-
-
 
   return (
     <MDBContainer className="my-5">
@@ -71,7 +71,7 @@ function Login() {
             <MDBCardBody>
               <MDBInput
                 wrapperClass="mb-4"
-                label="Email address"
+                label="Username"
                 id="form1"
                 type="email"
                 value={id}
@@ -96,7 +96,10 @@ function Login() {
                 <a href="!#">Forgot password?</a>
               </div>
 
-              <MDBBtn className="mb-4 w-100" onClick={async () => await handleSubmit()}>
+              <MDBBtn
+                className="mb-4 w-100"
+                onClick={async () => await handleSubmit()}
+              >
                 Sign in
               </MDBBtn>
             </MDBCardBody>

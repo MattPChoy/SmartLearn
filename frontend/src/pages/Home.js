@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import { Accordion, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useAuth } from "../helper/AuthContext";
 
 const temp_courses = [
   {
@@ -27,6 +28,9 @@ const temp_courses = [
 ];
 
 function Home() {
+  const { currentUser } = useAuth();
+  console.log(currentUser);
+
   function CourseCard({ code, name, coordinator }) {
     return (
       <div className="CourseCard">
