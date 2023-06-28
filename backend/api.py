@@ -26,6 +26,8 @@ class API:
             return self.register(request_body)
         if path[0] == "enrol" and request_method == "POST":
             return self.enrol(request_body)
+        if path[0] == "unenrol" and request_method == "POST":
+            return self.unenrol(request_body)
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -58,7 +60,7 @@ class API:
     def enrol(self, request_body):
         # Checks if id and password fields are in request
         if not ("student_id" in request_body and "offering_id" in request_body):
-            return {SUCCESS: False, REASON: "Missing student or org id"}
+            return {SUCCESS: False, REASON: "Missing student or offering id"}
 
         try:
             student_id = int(request_body["student_id"])
@@ -91,6 +93,28 @@ class API:
         res = self.db.query(f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
         return res and res[0][0]
 
+    def unenrol(self, request_body):
+        # Checks if id and password fields are in request
+        if not ("student_id" in request_body and "offering_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student or offering id"}
+
+        try:
+            student_id = int(request_body["student_id"])
+            offering_id = int(request_body["offering_id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
+
+        if not self.student_in_db(student_id):
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+
+        if not self.offering_in_db(offering_id):
+            return {SUCCESS: False, REASON: "Offering id not found in database."}
+
+        if not self.is_enrolled(student_id, offering_id):
+            return {SUCCESS: False, REASON: "Student is not enrolled"}
+
+        self.db.query(f'''DELETE FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id''')
+        return {SUCCESS: True}
 
 
     def get_courses(self, request_body):
