@@ -3,6 +3,8 @@ from database import Database
 SUCCESS = "success"
 REASON = "reason"
 
+REGISTER_FIELDS = ["id", "firstname", "surname", "password", "email"]
+
 
 class API:
     def __init__(self, db: Database) -> None:
@@ -53,9 +55,19 @@ class API:
         return {SUCCESS: True}
 
     def register(self, request_body):
+        # Checks all fields are found in request
+        for field in REGISTER_FIELDS:
+            if field not in request_body:
+                return {SUCCESS: False, REASON: f"Missing {field} in request."}
+
         id, fname, sname, password, email = request_body["id"], request_body["firstname"], request_body["surname"], \
             request_body["password"], request_body["email"]
+
+        if not self.student_in_db(id):
+            return {SUCCESS: False, REASON: "Student is already registered."}
+
         self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
+        return {SUCCESS: True}
 
     def enrol(self, request_body):
         # Checks if id and password fields are in request
