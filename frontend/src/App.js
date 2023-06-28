@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Course from "./pages/Course";
 import CourseEnrol from "./pages/CourseEnrol";
 import Admin from "./pages/Admin";
+import EditLesson from "./pages/EditLesson";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
         <Route path="/enrol" element={<CourseEnrol />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/course/:courseId" element={<Course />} />
+        <Route path="/courses/:courseId" element={<Course />} />
+        <Route path="/admin/:courseId/:lessonId" element={<EditLesson />} />
         <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
     </BrowserRouter>

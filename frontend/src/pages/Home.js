@@ -38,7 +38,7 @@ function Home() {
                 <h3>{name}</h3>
                 <div className="CourseDescription">
                   <h6>{coordinator}</h6>
-                  <Link to={`/course/${code}`}>View</Link>
+                  <Link to={`/courses/${code}`}>View</Link>
                 </div>
               </div>
             </Accordion.Body>
