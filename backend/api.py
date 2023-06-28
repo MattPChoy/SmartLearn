@@ -33,6 +33,8 @@ class API:
             return self.register(request_body)
         if _path[0] == "availableCourses" and request_method == "GET":
             return self.get_available_courses()
+        if _path[0] == "currentlyEnrolled" and request_method == "GET":
+            return self.get_currently_enrolled(request_body)
         if _path[0] == "uploadVideo" and request_method == "POST":
             return self.upload_video(request_body, path)
         return {SUCCESS: False, REASON: "Undefined behaviour"}
@@ -42,7 +44,10 @@ class API:
         if not ("id" in request_body and "password" in request_body):
             return {SUCCESS: False, REASON: "Missing id or password."}
 
-        id = int(request_body["id"])
+        try:
+            id = int(request_body["id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "Invalid id type when converting to integer datatype."}
         password = request_body["password"]
 
         query = f"SELECT password FROM Users WHERE id == {id}"
@@ -107,5 +112,20 @@ class API:
             fp.write(request.data)
         return {SUCCESS: True}
 
+    def get_currently_enrolled(self, request_body):
 
-
+        if not ("student_id" in request_body):
+            return {SUCCESS: False, REASON: "Missing student_id."}
+        id = request_body["student_id"]
+        res = self.db.query(f"""
+            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments 
+            JOIN Offerings ON Enrolments.offering_id=Offerings.id
+            JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
+            JOIN Courses ON Offerings.course_id=Courses.id
+            WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
+        
+        cols = ["coordinator_firstname", "coordinator_lastname", "course_name", "course_desc"]
+        _res = list()
+        for row in res:
+            _res.append(dict(zip(cols, row)))
+        return {SUCCESS:True, "data":_res}
