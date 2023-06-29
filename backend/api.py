@@ -1,6 +1,7 @@
 from database import Database
 import os
 from flask import request
+import cv2
 
 SUCCESS = "success"
 REASON = "reason"
@@ -203,9 +204,9 @@ class API:
         #save video to file
         with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
             fp.write(request_files["video"].read())
-
+        
         return {SUCCESS: True}
-
+    
         # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
         #     fp.write(request_files["file"].read())
         # return {SUCCESS: True}
@@ -246,7 +247,7 @@ class API:
 
         if len(res) != 1:
             return {SUCCESS: False, REASON: "Student id not found in database."}
-
+        
         cols = ["firstname", "lastname", "email", "phone"]
         return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
-
+    
