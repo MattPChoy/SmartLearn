@@ -132,11 +132,13 @@ function CourseEnrol() {
       //   headers: {'Content-Type':'application/json'},
       // })
 
-      showCourseConfirmation();
-      console.log(semester);
-      console.log(course);
-    }
-  };  function optionReturn () {
+      showCourseConfirmation()      
+      console.log(semester)
+      console.log(course)
+    } 
+  }
+
+  function optionReturn () {
     if (course === '') {
       return {courses}
     }
