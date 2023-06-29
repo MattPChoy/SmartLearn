@@ -35,7 +35,7 @@ class API:
         if _path[0] == "register" and request_method == "POST":
             return self.register(request_body)
         if _path[0] == "availableCourses" and request_method == "GET":
-            return self.get_available_courses()
+            return self.get_available_courses(request_body)
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             return self.get_currently_enrolled(request_body)
         if _path[0] == "uploadVideo" and request_method == "POST":
@@ -163,16 +163,30 @@ class API:
 
         return {SUCCESS: True, "data": result}
 
-    def get_available_courses(self):
+    def get_available_courses(self, request_body):
+        if "id" not in request_body:
+            return {SUCCESS: False, REASON: "ID not found in the request."}
+
+        try:
+            id = int(request_body["id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "ID not of integer form."}
+
         query=f"""
-            SELECT Courses.name, Offerings.year, Offerings.semester, Coordinators.firstname as CoordinatorFirstName,
-        Coordinators.lastname as CoordinatorLastName, Organisations.name as OrganisationName
+        SELECT Courses.name, Offerings.year, Offerings.semester,
+        Coordinators.firstname as CoordinatorFirstName,
+        Coordinators.lastname as CoordinatorLastName,
+        Organisations.name as OrganisationName
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
         JOIN Organisations ON Organisations.id=Courses.org_id
-        WHERE year={CURR_YEAR} AND semester={CURR_SEMESTER}"""
-        print(query)
+        WHERE year=2023 AND semester=2 AND Offerings.id NOT IN (
+	        SELECT Enrolments.offering_id
+	        FROM Enrolments
+	        WHERE {id} == Enrolments.student_id
+        )
+        """
         res = self.db.query(query)
         print(res)
 
@@ -180,7 +194,7 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
-        return _res
+        return {SUCCESS: True, "data": _res}
 
     def upload_video(self, request_body, path):
         """Upload a file."""
@@ -219,3 +233,4 @@ class API:
         for row in res:
             _res.append(dict(zip(cols, row)))
         return {SUCCESS:True, "data":_res}
+

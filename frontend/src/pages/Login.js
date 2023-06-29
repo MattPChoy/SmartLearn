@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { sha1 } from "crypto-hash";
 import {
@@ -38,12 +38,10 @@ function Login() {
         .then((data) => {
           if (data.success === true) {
             // Successful log in
-            console.log("Good login");
             login(id);
             nav("/");
           } else {
             // Unsucessful log in
-            console.log("Bad login");
             console.log(data);
           }
         })
@@ -51,7 +49,6 @@ function Login() {
           console.error("Error:", error);
         });
     } catch (e) {
-      console.log(e);
       alert(e);
     }
   }
