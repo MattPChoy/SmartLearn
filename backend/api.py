@@ -44,6 +44,8 @@ class API:
             return self.enrol(request_body)
         if _path[0] == "unenrol" and request_method == "POST":
             return self.unenrol(request_body)
+        if _path[0] == "profile" and request_method == "GET":
+            return self.get_profile(request_body)
 
         print(_path[0])
 
@@ -194,7 +196,7 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
-        return _res
+        return {SUCCESS: True, "data": _res}
 
     def upload_video(self, request_body, path):
         """Upload a file."""
@@ -234,3 +236,14 @@ class API:
             _res.append(dict(zip(cols, row)))
         return {SUCCESS:True, "data":_res}
 
+    def get_profile(self, request_body):
+        if not "student_id" in request_body:
+            return {SUCCESS: False, REASON: "Missing student id"}
+
+        res = self.db.query(f"SELECT fname, sname, email FROM Users WHERE id={request_body['student_id']}")
+
+        if len(res) != 1:
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+        
+        cols = ["firstname", "lastname", "email", "phone"]
+        return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
