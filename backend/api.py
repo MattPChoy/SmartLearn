@@ -22,7 +22,7 @@ class API:
         :return: The result of the request.
         """
         _path = path.split("/")
-  
+
 
         # json {success: bool, reason: str}
         # path = [auth, ]
@@ -37,14 +37,15 @@ class API:
         if _path[0] == "availableCourses" and request_method == "GET":
             return self.get_available_courses()
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
-            print(request_body)
-            return self.get_currently_enrolled(_path[1])
+            return self.get_currently_enrolled(request_body)
         if _path[0] == "uploadVideo" and request_method == "POST":
             return self.upload_video(request_body, path)
-        if path[0] == "enrol" and request_method == "POST":
+        if _path[0] == "enrol" and request_method == "POST":
             return self.enrol(request_body)
-        if path[0] == "unenrol" and request_method == "POST":
+        if _path[0] == "unenrol" and request_method == "POST":
             return self.unenrol(request_body)
+
+        print(_path[0])
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -161,10 +162,10 @@ class API:
             result.append(dict(zip(col_names, row)))
 
         return {SUCCESS: True, "data": result}
-    
+
     def get_available_courses(self):
         query=f"""
-            SELECT Courses.name, Offerings.year, Offerings.semester, Coordinators.firstname as CoordinatorFirstName, 
+            SELECT Courses.name, Offerings.year, Offerings.semester, Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName, Organisations.name as OrganisationName
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
@@ -191,19 +192,28 @@ class API:
             fp.write(request.data)
         return {SUCCESS: True}
 
-    def get_currently_enrolled(self, id):
-    
+    def get_currently_enrolled(self, request_body):
+        print(request_body)
+        if "id" not in request_body:
+            return {SUCCESS: False, REASON: "ID not found in the request."}
+
+        try:
+            id = int(request_body["id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "ID not of integer form."}
+
+        print(f"Student id = {id}")
 
         if not self.student_in_db(id):
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
         res = self.db.query(f"""
-            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments 
+            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments
             JOIN Offerings ON Enrolments.offering_id=Offerings.id
             JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
             JOIN Courses ON Offerings.course_id=Courses.id
             WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
-        
+
         cols = ["coordinator_firstname", "coordinator_lastname", "course_name", "course_desc"]
         _res = list()
         for row in res:
