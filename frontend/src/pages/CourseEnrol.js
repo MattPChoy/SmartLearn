@@ -6,7 +6,7 @@ import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
@@ -22,6 +22,7 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
+  // const [courses, setCourses] = useState([])
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -122,7 +123,6 @@ function CourseEnrol() {
       console.log(semester.length);
       showInvalidSem();
     } else {
-      const semNo = semester.split(";")[1];
       // fetch("http://localhost:5000/api/enrol", {
       //   method: "POST",
       //   body: JSON.stringify({
@@ -136,29 +136,45 @@ function CourseEnrol() {
       showCourseConfirmation()
       // console.log(semester)
       // console.log(course)
+      // const data = getAvailableCourses(currentUser)
+      
     }
   }
 
-  function optionReturn() {
-    if (course === "") {
-      return { courses };
-    }
-  }
+  // function optionReturn() {
+  //   if (course === "") {
+  //     return { courses };
+  //   }
+  // }
 
-  //
+  /** fetching course details */
   function getAvailableCourses(student_id) {
     fetch(`http://localhost:5000/api/availableCourses?id=${student_id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
+      // console.log(data)
       if (data.success === true) {
-        return data.data
+        // console.log(courses)
+        Object.values(data)[0].map((courseList)=>{
+          if (!courses.includes(courseList.course_name)) {
+            courses.push(courseList.course_name) 
+            console.log(courseList.course_nam)
+          }                   
+        })
+        return data
       }
       console.log("Request failed")
     })
   }
+
+  useEffect(()=>{
+    getAvailableCourses(currentUser)
+    console.log('hello')
+  })
+
   /**Create page components */
-  return (
+  return (    
     <div className="w-25">
       <h1>Course Enrol</h1>
       <InvalidCourse />
