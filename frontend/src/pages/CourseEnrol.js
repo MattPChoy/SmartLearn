@@ -123,15 +123,15 @@ function CourseEnrol() {
       showInvalidSem();
     } else {
       const semNo = semester.split(";")[1];
-      fetch("http://localhost:5000/api/enrol", {
-        method: "POST",
-        body: JSON.stringify({
-          courseID: course,
-          semNo: semNo,
-          year: year,
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
+      // fetch("http://localhost:5000/api/enrol", {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     courseID: course,
+      //     semNo: semNo,
+      //     year: year
+      //   }),
+      //   headers: {'Content-Type':'application/json'},
+      // })
 
       showCourseConfirmation();
       console.log(semester);
