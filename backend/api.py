@@ -38,8 +38,6 @@ class API:
             return self.get_available_courses(request_body)
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             return self.get_currently_enrolled(request_body)
-        if _path[0] == "uploadVideo" and request_method == "POST":
-            return self.upload_video(request_body, path)
         if _path[0] == "enrol" and request_method == "POST":
             return self.enrol(request_body)
         if _path[0] == "unenrol" and request_method == "POST":
