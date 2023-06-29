@@ -14,6 +14,7 @@ function Header() {
   const courses = ["COMP3506", "COMP3702", "DECO3801", "MATH2100"];
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const im = "https://scontent-hkt1-1.xx.fbcdn.net/v/t1.15752-9/355392768_294387796343019_4736075506570905616_n.jpg?_nc_cat=111&cb=99be929b-3346023f&ccb=1-7&_nc_sid=ae9488&_nc_ohc=36oJtlmLS6oAX_mjZjv&_nc_ht=scontent-hkt1-1.xx&oh=03_AdSja2Po13_iUkC6ywPnMI5ofKHXhktK4SE-udwFbSpRtQ&oe=64C47A70"
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
@@ -39,7 +40,7 @@ function Header() {
               <Nav.Link onClick={() => logout()}>Logout</Nav.Link>
             )}
 
-            <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link>
+            
             <NavDropdown title="Courses" id="basic-nav-dropdown">
               {courses.map((course, index) => (
                 <NavDropdown.Item
@@ -49,6 +50,16 @@ function Header() {
                   {course}
                 </NavDropdown.Item>
               ))}
+            </NavDropdown>
+            <NavDropdown title="Profile" id="basic-nav-dropdown">
+              <NavDropdown.Item >
+                  <img style={{ width: 50, height: 50, borderRadius: 400/ 2, margin: 10 }} src={im} alt="profpic"/>
+                  <label> Harrison Wills (harris@beastmail.com)</label>                
+              </NavDropdown.Item>
+              <NavDropdown.Item >
+                <Nav.Link onClick={() => navigate("/login")}>Logout</Nav.Link>
+              </NavDropdown.Item>
+              
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

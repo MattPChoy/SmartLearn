@@ -133,8 +133,8 @@ function CourseEnrol() {
       // })
 
       showCourseConfirmation()      
-      console.log(semester)
-      console.log(course)
+      // console.log(semester)
+      // console.log(course)
     } 
   }
 
