@@ -122,15 +122,15 @@ function CourseEnrol() {
       showInvalidSem()
     } else {
       const semNo = semester.split(';')[1]
-      fetch("http://localhost:5000/api/enrol", {
-        method: "POST",
-        body: JSON.stringify({
-          courseID: course,
-          semNo: semNo,
-          year: year
-        }),
-        headers: {'Content-Type':'application/json'},
-      })
+      // fetch("http://localhost:5000/api/enrol", {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     courseID: course,
+      //     semNo: semNo,
+      //     year: year
+      //   }),
+      //   headers: {'Content-Type':'application/json'},
+      // })
 
       showCourseConfirmation()      
       console.log(semester)
@@ -138,13 +138,16 @@ function CourseEnrol() {
     } 
   }
 
-
+  function optionReturn () {
+    if (course === '') {
+      return {courses}
+    }
+  }
 
   /**Create page components */
   return (
     <div className="w-25">
       <Headers />
-      
       <h1>Course Enrol</h1>
       <InvalidCourse />
       <InvalidSemester />
@@ -155,7 +158,7 @@ function CourseEnrol() {
         id="combo-box-demo"
         options={courses}
         value={course}
-        onInputChange={(e, newValue) => setCourse(newValue)}
+        onInputChange={(_, newValue) => setCourse(newValue)}
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Select Course" />} />
       <br/>

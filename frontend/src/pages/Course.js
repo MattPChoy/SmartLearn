@@ -61,7 +61,6 @@ function Course() {
     return (
       <Form>
         {questions.map((question, index) => {
-          console.log(typeof question.answer);
           return (
             <div className="Question">
               <h3 key={index}>{question.question}</h3>
