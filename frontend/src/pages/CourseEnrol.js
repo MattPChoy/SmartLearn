@@ -1,5 +1,5 @@
 import React from "react";
-import AutoComplete from '@mui/material/Autocomplete'
+import AutoComplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
 import { Button } from "react-bootstrap";
 import Select from "@mui/material/Select";
@@ -7,23 +7,20 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-<<<<<<< HEAD
 import Modal from "react-bootstrap/Modal";
 import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
-=======
-import Headers from "../components/Header";
-import Modal from 'react-bootstrap/Modal';
-import Table from 'react-bootstrap/Table';
->>>>>>> 4e79718e0c52484a7aff0c694a3137377baf34a2
+import Modal from "react-bootstrap/Modal";
+import Table from "react-bootstrap/Table";
 
 function CourseEnrol() {
-  const courses = ['DECO2500', 'ELEC2301', 'MATH6969']
-  const semesters = [1,2,3]
+  const { currentUser } = useAuth();
+  const courses = ["DECO2500", "ELEC2301", "MATH6969"];
+  const semesters = [1, 2, 3];
   const year = 2023;
 
-  const [semester, setSem] = useState('');
-  const [course, setCourse] = useState('');
+  const [semester, setSem] = useState("");
+  const [course, setCourse] = useState("");
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
@@ -32,12 +29,12 @@ function CourseEnrol() {
   const showInvalidSem = () => setSemShow(true);
   const closeInvalidCourse = () => setCourseShow(false);
   const showInvalidCourse = () => setCourseShow(true);
-  const closeCourseConfirmation = () => setCourseConfirmationShow(false)
+  const closeCourseConfirmation = () => setCourseConfirmationShow(false);
   const courseUnenrol = () => {
-    setCourseConfirmationShow(false)
+    setCourseConfirmationShow(false);
     // unenrol in back end
-  }
-  const showCourseConfirmation = () => setCourseConfirmationShow(true)
+  };
+  const showCourseConfirmation = () => setCourseConfirmationShow(true);
 
   /* handle form control change message*/
   const handleChange = (event) => {
@@ -58,7 +55,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    )
+    );
   }
 
   /** Invalid semester pop up message*/
@@ -75,7 +72,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    )
+    );
   }
 
   /** Course confirmation pop up*/
@@ -87,18 +84,18 @@ function CourseEnrol() {
         </Modal.Header>
         <Modal.Body>You have successfully enrolled in the course</Modal.Body>
         <Modal.Footer>
-        <Button variant="secondary" onClick={courseUnenrol}>
+          <Button variant="secondary" onClick={courseUnenrol}>
             Unenrol
           </Button>
           <Button variant="primary" onClick={closeCourseConfirmation}>
             Close
-          </Button>          
+          </Button>
         </Modal.Footer>
       </Modal>
-    )
+    );
   }
 
-  function CourseTable () {
+  function CourseTable() {
     return (
       <Table striped>
         <thead>
@@ -116,18 +113,18 @@ function CourseEnrol() {
           </tr>
         </tbody>
       </Table>
-    )
+    );
   }
 
   /* Submit button event and error handle*/
-  const handleSubmit = () => {   
-    if(!courses.includes(course)) {
-      showInvalidCourse()
-    } else if(semester.length===0){
-      console.log(semester.length)
-      showInvalidSem()
+  const handleSubmit = () => {
+    if (!courses.includes(course)) {
+      showInvalidCourse();
+    } else if (semester.length === 0) {
+      console.log(semester.length);
+      showInvalidSem();
     } else {
-      const semNo = semester.split(';')[1]
+      const semNo = semester.split(";")[1];
       // fetch("http://localhost:5000/api/enrol", {
       //   method: "POST",
       //   body: JSON.stringify({
@@ -138,25 +135,21 @@ function CourseEnrol() {
       //   headers: {'Content-Type':'application/json'},
       // })
 
-      showCourseConfirmation()      
-      console.log(semester)
-      console.log(course)
-    } 
-  }
+      showCourseConfirmation();
+      console.log(semester);
+      console.log(course);
+    }
+  };
 
-  function optionReturn () {
-    if (course === '') {
-      return {courses}
+  function optionReturn() {
+    if (course === "") {
+      return { courses };
     }
   }
 
   /**Create page components */
   return (
     <div className="w-25">
-<<<<<<< HEAD
-=======
-      <Headers />
->>>>>>> 4e79718e0c52484a7aff0c694a3137377baf34a2
       <h1>Course Enrol</h1>
       <InvalidCourse />
       <InvalidSemester />
@@ -169,8 +162,11 @@ function CourseEnrol() {
         value={course}
         onInputChange={(_, newValue) => setCourse(newValue)}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Select Course" />} />
-      <br/>
+        renderInput={(params) => (
+          <TextField {...params} label="Select Course" />
+        )}
+      />
+      <br />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Semester</InputLabel>
         <Select
@@ -179,19 +175,28 @@ function CourseEnrol() {
           value={semester}
           label="Semester"
           onChange={handleChange}
-        > 
-        
-        {semesters.map((semester, index) => (<MenuItem key={index} value={`${year}; ${semester}`}>
-          {`Semester ${semester}; ${year}`}</MenuItem>))}            
+        >
+          {semesters.map((semester, index) => (
+            <MenuItem key={index} value={`${year}; ${semester}`}>
+              {`Semester ${semester}; ${year}`}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
-      <br/><br/>
+      <br />
+      <br />
 
-      <Button className="btn btn-dark w-100" onClick={async () => await handleSubmit()}>Sign away your life</Button>
-      <br/><br/>
+      <Button
+        className="btn btn-dark w-100"
+        onClick={async () => await handleSubmit()}
+      >
+        Sign away your life
+      </Button>
+      <br />
+      <br />
       <CourseTable />
     </div>
-    );
+  );
 }
 
 export default CourseEnrol;
