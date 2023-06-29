@@ -9,8 +9,8 @@ import { AuthProvider } from "./helper/AuthContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <AuthProvider>
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/enrol" element={<CourseEnrol />} />
@@ -20,8 +20,8 @@ function App() {
           <Route path="/admin/:courseId/:lessonId" element={<EditLesson />} />
           <Route path="*" element={<h1>Page Not Found</h1>} />
         </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

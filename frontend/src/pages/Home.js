@@ -24,24 +24,19 @@ function Home() {
               headers: { "Content-Type": "application/json" },
             }
           );
-          console.log(res);
           const resObj = await res.json();
-          console.log(resObj);
           if (resObj.success === true) {
             setCourses(resObj.data);
             setLoading(false);
           }
         } catch (e) {
           console.log(e);
-          console.warn(e);
         }
       }
     }
 
     fetchData();
   }, [currentUser, navigate]);
-
-  console.log(currentUser);
 
   function CourseCard({ code, name, coordinator }) {
     return (
