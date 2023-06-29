@@ -1,5 +1,4 @@
 import { useLocation } from "react-router-dom";
-import Header from "../components/Header";
 import { Tab, Tabs, Form } from "react-bootstrap";
 
 function Course() {
@@ -61,7 +60,6 @@ function Course() {
     return (
       <Form>
         {questions.map((question, index) => {
-          console.log(typeof question.answer);
           return (
             <div className="Question">
               <h3 key={index}>{question.question}</h3>
@@ -75,7 +73,6 @@ function Course() {
 
   return (
     <div className="Course">
-      <Header />
       <h2>{temp_course.code}</h2>
 
       <Tabs defaultActiveKey="video" className="mb-3">

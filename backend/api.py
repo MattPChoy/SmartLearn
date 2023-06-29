@@ -1,6 +1,7 @@
 from database import Database
 import os
 from flask import request
+import cv2
 
 SUCCESS = "success"
 REASON = "reason"
@@ -22,7 +23,7 @@ class API:
         :return: The result of the request.
         """
         _path = path.split("/")
-  
+
 
         # json {success: bool, reason: str}
         # path = [auth, ]
@@ -35,16 +36,19 @@ class API:
         if _path[0] == "register" and request_method == "POST":
             return self.register(request_body)
         if _path[0] == "availableCourses" and request_method == "GET":
-            return self.get_available_courses()
+            return self.get_available_courses(request_body)
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
-            print(request_body)
-            return self.get_currently_enrolled(_path[1])
+            return self.get_currently_enrolled(request_body)
         if _path[0] == "uploadVideo" and request_method == "POST":
             return self.upload_video(request_body, path)
-        if path[0] == "enrol" and request_method == "POST":
+        if _path[0] == "enrol" and request_method == "POST":
             return self.enrol(request_body)
-        if path[0] == "unenrol" and request_method == "POST":
+        if _path[0] == "unenrol" and request_method == "POST":
             return self.unenrol(request_body)
+        if _path[0] == "profile" and request_method == "GET":
+            return self.get_profile(request_body)
+
+        print(_path[0])
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
 
@@ -161,17 +165,31 @@ class API:
             result.append(dict(zip(col_names, row)))
 
         return {SUCCESS: True, "data": result}
-    
-    def get_available_courses(self):
+
+    def get_available_courses(self, request_body):
+        if "id" not in request_body:
+            return {SUCCESS: False, REASON: "ID not found in the request."}
+
+        try:
+            id = int(request_body["id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "ID not of integer form."}
+
         query=f"""
-            SELECT Courses.name, Offerings.year, Offerings.semester, Coordinators.firstname as CoordinatorFirstName, 
-        Coordinators.lastname as CoordinatorLastName, Organisations.name as OrganisationName
+        SELECT Courses.name, Offerings.year, Offerings.semester,
+        Coordinators.firstname as CoordinatorFirstName,
+        Coordinators.lastname as CoordinatorLastName,
+        Organisations.name as OrganisationName
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
         JOIN Organisations ON Organisations.id=Courses.org_id
-        WHERE year={CURR_YEAR} AND semester={CURR_SEMESTER}"""
-        print(query)
+        WHERE year=2023 AND semester=2 AND Offerings.id NOT IN (
+	        SELECT Enrolments.offering_id
+	        FROM Enrolments
+	        WHERE {id} == Enrolments.student_id
+        )
+        """
         res = self.db.query(query)
         print(res)
 
@@ -179,33 +197,59 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
-        return _res
+        return {SUCCESS: True, "data": _res}
 
-    def upload_video(self, request_body, path):
+    def upload_video(self, request_files):
         """Upload a file."""
+        file_name = request_files["video"].filename
 
-        if "/" in path:
-            # Return 400 BAD REQUEST
-            return {SUCCESS: False, REASON: "no slashes allowed in the filename"}
-        with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
-            fp.write(request.data)
+        #save video to file
+        with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
+            fp.write(request_files["video"].read())
+        
         return {SUCCESS: True}
-
-    def get_currently_enrolled(self, id):
     
+        # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
+        #     fp.write(request_files["file"].read())
+        # return {SUCCESS: True}
+
+    def get_currently_enrolled(self, request_body):
+        print(request_body)
+        if "id" not in request_body:
+            return {SUCCESS: False, REASON: "ID not found in the request."}
+
+        try:
+            id = int(request_body["id"])
+        except ValueError:
+            return {SUCCESS: False, REASON: "ID not of integer form."}
+
+        print(f"Student id = {id}")
 
         if not self.student_in_db(id):
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
         res = self.db.query(f"""
-            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments 
+            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments
             JOIN Offerings ON Enrolments.offering_id=Offerings.id
             JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
             JOIN Courses ON Offerings.course_id=Courses.id
             WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
-        
+
         cols = ["coordinator_firstname", "coordinator_lastname", "course_name", "course_desc"]
         _res = list()
         for row in res:
             _res.append(dict(zip(cols, row)))
         return {SUCCESS:True, "data":_res}
+
+    def get_profile(self, request_body):
+        if not "student_id" in request_body:
+            return {SUCCESS: False, REASON: "Missing student id"}
+
+        res = self.db.query(f"SELECT fname, sname, email FROM Users WHERE id={request_body['student_id']}")
+
+        if len(res) != 1:
+            return {SUCCESS: False, REASON: "Student id not found in database."}
+        
+        cols = ["firstname", "lastname", "email", "phone"]
+        return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
+    

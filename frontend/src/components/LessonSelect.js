@@ -1,5 +1,4 @@
 import { ListGroup } from "react-bootstrap";
-import { removeSlashSuffix } from "../helper/misc";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function LessonSelect({ lessons, course }) {
@@ -13,9 +12,9 @@ function LessonSelect({ lessons, course }) {
           key={lesson.id}
           action
           onClick={() =>
-            navigate(
-              `${removeSlashSuffix(location.pathname)}/${course}/${lesson.id}`
-            )
+            location.pathname === "/admin"
+              ? navigate(`${course}/${lesson.id}`)
+              : navigate(`${lesson.id}`)
           }
         >
           {lesson.name}

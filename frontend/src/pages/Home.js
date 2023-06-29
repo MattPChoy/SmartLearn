@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../components/Header";
 import { Accordion, Container, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../helper/AuthContext";
@@ -24,24 +23,19 @@ function Home() {
               headers: { "Content-Type": "application/json" },
             }
           );
-          console.log(res);
           const resObj = await res.json();
-          console.log(resObj);
           if (resObj.success === true) {
             setCourses(resObj.data);
             setLoading(false);
           }
         } catch (e) {
           console.log(e);
-          console.warn(e);
         }
       }
     }
 
     fetchData();
   }, [currentUser, navigate]);
-
-  console.log(currentUser);
 
   function CourseCard({ code, name, coordinator }) {
     return (
@@ -54,7 +48,7 @@ function Home() {
                 <h3>{name}</h3>
                 <div className="CourseDescription">
                   <h6>{coordinator}</h6>
-                  <Link to={`/courses/${code}`}>View</Link>
+                  <Link to={`/${code}`}>View</Link>
                 </div>
               </div>
             </Accordion.Body>
@@ -66,7 +60,6 @@ function Home() {
 
   return (
     <>
-      <Header />
       {loading ? (
         <Spinner />
       ) : (

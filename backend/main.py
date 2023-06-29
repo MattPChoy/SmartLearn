@@ -16,11 +16,9 @@ def main():
 def not_found(e):
     return app.send_static_file("index.html")
 
-@app.route("/api/currentlyEnrolled", methods=["GET"])
-def get_currently_enrolled():
-    args = request.args
-    return jsonify(api.get_currently_enrolled(args["id"]))
-
+@app.route("/api/uploadVideo", methods=["POST"])
+def upload_video():
+    return jsonify(api.upload_video(request.files))
 
 @app.route("/api/<path:route>", methods=["GET", "POST"])
 def api_endpoint(route):
@@ -29,6 +27,6 @@ def api_endpoint(route):
     :param route: String representing the path with $ipAddress:$port/api/ stripped off.
     :return: Appropriate response data.
     """
-    return jsonify(api.parse_response(request.method, request.json, route))
+    return jsonify(api.parse_response(request.method, request.json if request.method == "POST" else request.args, route))
 
 app.run()
