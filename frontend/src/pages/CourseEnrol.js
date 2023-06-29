@@ -133,10 +133,10 @@ function CourseEnrol() {
       //   headers: {'Content-Type':'application/json'},
       // })
 
-      showCourseConfirmation()      
+      showCourseConfirmation()
       // console.log(semester)
       // console.log(course)
-    } 
+    }
   }
 
   function optionReturn() {
@@ -145,6 +145,18 @@ function CourseEnrol() {
     }
   }
 
+  //
+  function getAvailableCourses(student_id) {
+    fetch(`http://localhost:5000/api/availableCourses?id=${student_id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => response.json()).then((data) => {
+      if (data.success === true) {
+        return data.data
+      }
+      console.log("Request failed")
+    })
+  }
   /**Create page components */
   return (
     <div className="w-25">
