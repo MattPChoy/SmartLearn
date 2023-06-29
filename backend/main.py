@@ -16,6 +16,10 @@ def main():
 def not_found(e):
     return app.send_static_file("index.html")
 
+@app.route("/api/uploadVideo", methods=["POST"])
+def upload_video():
+    return jsonify(api.upload_video(request.files))
+
 @app.route("/api/<path:route>", methods=["GET", "POST"])
 def api_endpoint(route):
     """

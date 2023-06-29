@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Form, Button } from "react-bootstrap";
 
 const temp_questions = [
@@ -30,8 +30,8 @@ const temp_questions = [
 
 function EditLesson() {
   const [videoUrl, setVideoUrl] = useState(null);
-  const [video, setVideo] = useState(null);
   const [questions, setQuestions] = useState(temp_questions);
+  const videoRef = useRef(null);
 
   function handleChange(e, i) {
     const [type, index] = e.target.name.split(":");
@@ -42,14 +42,20 @@ function EditLesson() {
     ]);
   }
 
-  function handleUpload(e) {
+  async function handleUpload(e) {
     e.preventDefault();
-    console.log(video);
-    // fetch("http://localhost:5000/upload", {
-    //   method: "POST",
-    //   body: video,
-    // }
-    // )
+    const data = new FormData();
+    data.append("video", videoRef.current.files[0]);
+    console.log(data);
+    try {
+      const res = await fetch("http://localhost:5000/api/uploadVideo", {
+        method: "POST",
+        body: data,
+      });
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
@@ -77,11 +83,11 @@ function EditLesson() {
                   onChange={(e) => {
                     try {
                       setVideoUrl(URL.createObjectURL(e.target.files[0]));
-                      setVideo(e.target.files[0]);
                     } catch (e) {
                       console.log(e);
                     }
                   }}
+                  ref={videoRef}
                 />
               </Form.Group>
               <Button variant="primary" type="submit">
