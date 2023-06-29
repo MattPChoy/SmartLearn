@@ -33,23 +33,21 @@ function Header() {
               <Nav.Link onClick={() => navigate("/admin")}>Admin</Nav.Link>
             )}
 
-            {currentUser === null ? (
-              <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link>
-            ) : (
-              <Nav.Link onClick={() => logout()}>Logout</Nav.Link>
-            )}
-
-            <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link>
             <NavDropdown title="Courses" id="basic-nav-dropdown">
               {courses.map((course, index) => (
                 <NavDropdown.Item
                   key={index}
-                  onClick={() => navigate(`/courses/${course}`)}
+                  onClick={() => navigate(`/${course}`)}
                 >
                   {course}
                 </NavDropdown.Item>
               ))}
             </NavDropdown>
+            {currentUser === null ? (
+              <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link>
+            ) : (
+              <Nav.Link onClick={() => logout()}>Logout</Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "../components/Header";
 import { ListGroup } from "react-bootstrap";
 import LessonSelect from "../components/LessonSelect";
 import Fab from "@mui/material/Fab";
@@ -66,7 +65,6 @@ function Admin() {
 
   return (
     <>
-      <Header />
       <h1>Admin</h1>
       <div className="Admin">
         <div className="course-select">

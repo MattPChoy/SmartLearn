@@ -7,7 +7,6 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-import Headers from "../components/Header";
 import Modal from "react-bootstrap/Modal";
 import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
@@ -142,8 +141,6 @@ function CourseEnrol() {
   /**Create page components */
   return (
     <div className="w-25">
-      <Headers />
-
       <h1>Course Enrol</h1>
       <InvalidCourse />
       <InvalidSemester />
