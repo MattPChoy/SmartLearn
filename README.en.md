@@ -1,7 +1,7 @@
 # SmartFace
 
 #### Description
-An app to turn off pollution.
+
 
 #### Software Architecture
 Software architecture description
