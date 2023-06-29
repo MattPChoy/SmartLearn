@@ -60,9 +60,9 @@ Our software will follow the Nielsen's Heuristic Design Heuristics. (REFERENCE: 
 
 # 3. Development and operation environment
 | Server     | Main Configuration | OS                  | Purpose     | Middleware | Number |
-| ---------- | ------------------ | ------------------- | ---------   | ---------- | ------ |
-| PC Server  | 4C/16GB, 200GB     | SQLLite             | Database    | Nothing    |    1   |
-| PC Server  | 4C/16GB, 200GB     | Linux               | Application | Nothing    |    1   |
+| ---------- | ------------------ | ------------------- | ----------- | ---------- | ------ |
+| PC Server  | 4C/16GB, 100GB     | Linux               | Database    | Nothing    |    1   |
+| PC Server  | 4C/16GB, 1000GB    | Linux               | Application | Nothing    |    1   |
 
 # 4. Overall system architecture
 
@@ -75,12 +75,34 @@ Our software will follow the Nielsen's Heuristic Design Heuristics. (REFERENCE: 
 ## 4.4 Related system integration relationship
 
 ### 4.4.1 Student
+| AI education system (as student)                                                          |
+| ----------------------------------------------------------------------------------------- |
+| Interface function description  | Expected interface elements                             |
+| ----------------------------------------------------------------------------------------- |
+| Access profile                  | Input: username (stored within session)                 |
+|                                 | ------------------------------------------------------- |
+|                                 | Output: basic user information related to username      |
+| Enrol courses                   |                                                         |
+| Drop courses                    |     
+| Receive feedback                |                                                         |
+| Get course information          |                                                         |
+| Watch videos
+| Answer question 
 
 ### 4.4.2 Teacher
 
 # 5. Database design
 
 ## 5.1 Database environment description
+1. Hardware environment
+CPU: 8C
+Memory: 16GB
+Hard disk: 1000G
+Network: 1000M network card
+
+2. Software environment
+Database: SQLite
+Operating system: 
 
 ## 5.2 Database naming rules
 

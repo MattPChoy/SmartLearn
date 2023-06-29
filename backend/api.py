@@ -1,6 +1,7 @@
 from database import Database
 import os
 from flask import request
+import cv2
 
 SUCCESS = "success"
 REASON = "reason"
@@ -198,15 +199,19 @@ class API:
             _res.append(dict(zip(col, row)))
         return {SUCCESS: True, "data": _res}
 
-    def upload_video(self, request_body, path):
+    def upload_video(self, request_files):
         """Upload a file."""
+        file_name = request_files["video"].filename
 
-        if "/" in path:
-            # Return 400 BAD REQUEST
-            return {SUCCESS: False, REASON: "no slashes allowed in the filename"}
-        with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
-            fp.write(request.data)
+        #save video to file
+        with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
+            fp.write(request_files["video"].read())
+        
         return {SUCCESS: True}
+    
+        # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
+        #     fp.write(request_files["file"].read())
+        # return {SUCCESS: True}
 
     def get_currently_enrolled(self, request_body):
         print(request_body)
@@ -247,3 +252,4 @@ class API:
         
         cols = ["firstname", "lastname", "email", "phone"]
         return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
+    
