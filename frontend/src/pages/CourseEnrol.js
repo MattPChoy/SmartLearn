@@ -10,8 +10,6 @@ import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
-import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
 
 function CourseEnrol() {
   const { currentUser } = useAuth();
