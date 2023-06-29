@@ -1,6 +1,5 @@
 import { useState } from "react";
-import Header from "../components/Header";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
 const temp_questions = [
   {
@@ -30,6 +29,7 @@ const temp_questions = [
 ];
 
 function EditLesson() {
+  const [videoUrl, setVideoUrl] = useState(null);
   const [video, setVideo] = useState(null);
   const [questions, setQuestions] = useState(temp_questions);
 
@@ -42,34 +42,51 @@ function EditLesson() {
     ]);
   }
 
+  function handleUpload(e) {
+    e.preventDefault();
+    console.log(video);
+    // fetch("http://localhost:5000/upload", {
+    //   method: "POST",
+    //   body: video,
+    // }
+    // )
+  }
+
   return (
     <>
-      <Header />
       <h1>Edit Lesson</h1>
       <div className="Edit">
         <div className="top-container">
           <div className="left-container">
             <div className="video-container">
-              {video === null ? (
+              {videoUrl === null ? (
                 <>
                   <p className="no-upload">No Video Uploaded</p>
                 </>
               ) : (
                 <video controls>
-                  <source src={video} type="video/mp4" />
+                  <source src={videoUrl} type="video/mp4" />
                 </video>
               )}
             </div>
-            <Form>
+            <Form onSubmit={handleUpload}>
               <Form.Group className="mb-3" controlId="formVideoUpload">
                 <Form.Control
                   type="file"
                   accept="video/*"
-                  onChange={(e) =>
-                    setVideo(URL.createObjectURL(e.target.files[0]))
-                  }
+                  onChange={(e) => {
+                    try {
+                      setVideoUrl(URL.createObjectURL(e.target.files[0]));
+                      setVideo(e.target.files[0]);
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }}
                 />
               </Form.Group>
+              <Button variant="primary" type="submit">
+                Upload
+              </Button>
             </Form>
           </div>
           <div className="right-container">

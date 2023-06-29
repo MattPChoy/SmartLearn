@@ -5,21 +5,28 @@ import Course from "./pages/Course";
 import CourseEnrol from "./pages/CourseEnrol";
 import Admin from "./pages/Admin";
 import EditLesson from "./pages/EditLesson";
+import Wrapper from "./components/Wrapper";
+import Lessons from "./pages/Lessons";
+import Header from "./components/Header";
 import { AuthProvider } from "./helper/AuthContext";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/enrol" element={<CourseEnrol />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/courses/:courseId" element={<Course />} />
-          <Route path="/admin/:courseId/:lessonId" element={<EditLesson />} />
-          <Route path="*" element={<h1>Page Not Found</h1>} />
-        </Routes>
+        <Header />
+        <Wrapper>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/enrol" element={<CourseEnrol />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/:courseId/:lessonId" element={<Course />} />
+            <Route path="/:courseId" element={<Lessons />} />
+            <Route path="/admin/:courseId/:lessonId" element={<EditLesson />} />
+            <Route path="*" element={<h1>Page Not Found</h1>} />
+          </Routes>
+        </Wrapper>
       </BrowserRouter>
     </AuthProvider>
   );
