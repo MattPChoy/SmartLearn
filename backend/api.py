@@ -194,7 +194,7 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
-        return _res
+        return {SUCCESS: True, "data": _res}
 
     def upload_video(self, request_body, path):
         """Upload a file."""
