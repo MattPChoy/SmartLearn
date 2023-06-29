@@ -1,7 +1,6 @@
 from database import Database
 import os
 from flask import request
-import cv2
 
 SUCCESS = "success"
 REASON = "reason"
@@ -174,7 +173,7 @@ class API:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
         query=f"""
-        SELECT Courses.name, Offerings.year, Offerings.semester,
+        SELECT Offerings.id, Courses.name, Offerings.year, Offerings.semester,
         Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName,
         Organisations.name as OrganisationName
@@ -191,7 +190,7 @@ class API:
         res = self.db.query(query)
         print(res)
 
-        col = ["course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        col = ["offering_id", "course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
@@ -204,9 +203,9 @@ class API:
         #save video to file
         with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
             fp.write(request_files["video"].read())
-        
+
         return {SUCCESS: True}
-    
+
         # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
         #     fp.write(request_files["file"].read())
         # return {SUCCESS: True}
@@ -247,7 +246,7 @@ class API:
 
         if len(res) != 1:
             return {SUCCESS: False, REASON: "Student id not found in database."}
-        
+
         cols = ["firstname", "lastname", "email", "phone"]
         return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
-    
+
