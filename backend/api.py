@@ -250,7 +250,9 @@ class API:
         cols = ["firstname", "lastname", "email", "phone"]
         return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
     
-    # def get_classes(self, request_body):
+    def get_classes(self, request_body):
+        if not "offering_id" in request_body:
+            return {SUCCESS: False, REASON: "offering_id field not in request"}
 
     # lesson_name, lesson_id, lesson_date
     # video_fp, transcript, questions_json
