@@ -173,7 +173,7 @@ class API:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
         query=f"""
-        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester,
+        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id
         Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName,
         Organisations.name as OrganisationName
@@ -190,7 +190,7 @@ class API:
         res = self.db.query(query)
         print(res)
 
-        col = ["course_name", "description", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        col = ["course_name", "description", "year", "semester", "offering_id", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
