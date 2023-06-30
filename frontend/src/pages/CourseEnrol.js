@@ -8,12 +8,12 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
+import DataTable from "../components/DataTable";
 
 function CourseEnrol() {
   const { currentUser } = useAuth();
-  const courses = ["DECO2500", "ELEC2301", "MATH6969"];
+  // const courses = [];
   const semesters = [1, 2, 3];
   const year = 2023;
 
@@ -22,7 +22,9 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  // const [courses, setCourses] = useState([])
+  const [courses, setCourses] = useState([])
+  const [coursesDicts, setCourseDicts] = useState([])
+  const [enrolled, setEnrolled] = useState([])
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -71,7 +73,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    );
+    ); 
   }
 
   /** Course confirmation pop up*/
@@ -94,84 +96,57 @@ function CourseEnrol() {
     );
   }
 
-  function CourseTable() {
-    return (
-      <Table striped>
-        <thead>
-          <tr>
-            <th>Course ID</th>
-            <th>Course Title</th>
-            <th>Course Coordinator</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>c1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-          </tr>
-        </tbody>
-      </Table>
-    );
-  }
-
   /* Submit button event and error handle*/
   const handleSubmit = () => {
     if (!courses.includes(course)) {
       showInvalidCourse();
     } else if (semester.length === 0) {
-      console.log(semester.length);
       showInvalidSem();
     } else {
-      // fetch("http://localhost:5000/api/enrol", {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     courseID: course,
-      //     semNo: semNo,
-      //     year: year
-      //   }),
-      //   headers: {'Content-Type':'application/json'},
-      // })
-
       showCourseConfirmation()
-      // console.log(semester)
-      // console.log(course)
-      // const data = getAvailableCourses(currentUser)
-      
+      // getAvailableCourses(currentUser)  
+      if(courses.includes(course)) {
+        setEnrolled([...enrolled, coursesDicts.find(dict=>{
+          return dict.course_name === course
+        })]
+        )
+        console.log(enrolled)
+        // coursesDicts.map((courseDict)=> {
+        //   if (courseDict.course_name===course) {
+        //     // enrolled.push(courseDict)
+        //     // console.log(enrolled)
+        //     setEnrolled(...courseDict)
+        //     console.log(enrolled)
+        //     return courseDict
+        //   } else {
+        //     return 'Error'
+        //   }
+        // })
+      }  
     }
-  }
-
-  // function optionReturn() {
-  //   if (course === "") {
-  //     return { courses };
-  //   }
-  // }
-
+  } 
+ 
   /** fetching course details */
   function getAvailableCourses(student_id) {
     fetch(`http://localhost:5000/api/availableCourses?id=${student_id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
-      // console.log(data)
       if (data.success === true) {
-        // console.log(courses)
-        Object.values(data)[0].map((courseList)=>{
-          if (!courses.includes(courseList.course_name)) {
-            courses.push(courseList.course_name) 
-            console.log(courseList.course_nam)
-          }                   
-        })
-        return data
+        setCourseDicts(data.data)       
+        setCourses(data.data.map((courseList)=>{          
+          return(courseList.course_name)       
+        }))
+      } else {
+        console.log("Request failed")
       }
-      console.log("Request failed")
     })
   }
 
-  useEffect(()=>{
-    getAvailableCourses(currentUser)
-    console.log('hello')
-  })
+  /**Render th courses */
+  useEffect(() => {
+    getAvailableCourses(1)
+  }, [])
 
   /**Create page components */
   return (    
@@ -179,7 +154,7 @@ function CourseEnrol() {
       <h1>Course Enrol</h1>
       <InvalidCourse />
       <InvalidSemester />
-      <CourseConfirmation />
+      {/* <CourseConfirmation /> */}
       <AutoComplete
         className="w-100"
         disablePortal
@@ -217,10 +192,10 @@ function CourseEnrol() {
         onClick={async () => await handleSubmit()}
       >
         Sign away your life
-      </Button>
+      </Button> 
       <br />
       <br />
-      <CourseTable />
+      <DataTable  data={enrolled}/>
     </div>
   );
 }
