@@ -2,6 +2,7 @@ from database import Database
 import os
 from flask import request
 from vidtotext import transcribe
+import json
 
 
 SUCCESS = "success"
@@ -10,6 +11,7 @@ DATA = "data"
 CURR_YEAR = 2023
 CURR_SEMESTER = 2
 UPLOAD_DIRECTORY = "./videos"
+QUESTIONS_FILE = "./questions.json"
 
 REGISTER_FIELDS = ["id", "firstname", "surname", "password", "email"]
 
@@ -181,7 +183,7 @@ class API:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
         query=f"""
-        SELECT Courses.name, Offerings.year, Offerings.semester,
+        SELECT Courses.desc, Courses.name, Offerings.year, Offerings.semester,
         Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName,
         Organisations.name as OrganisationName
@@ -198,7 +200,7 @@ class API:
         res = self.db.query(query)
         print(res)
 
-        col = ["course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        col = ["description", "course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
@@ -289,6 +291,8 @@ class API:
         except ValueError:
             return {SUCCESS: False, REASON: "Offering or lesson ID not of integer form."}
 
+        # Gets JSON
+        f = open(QUESTIONS_FILE)
         query = f"""
         SELECT Lessons.date, Lessons.fp,
         """
