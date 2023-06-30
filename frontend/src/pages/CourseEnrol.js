@@ -1,7 +1,7 @@
 import React from "react";
 import AutoComplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -25,6 +25,7 @@ function CourseEnrol() {
   const [courses, setCourses] = useState([])
   const [coursesDicts, setCourseDicts] = useState([])
   const [enrolled, setEnrolled] = useState([])
+  const [loading, setLoading] = useState(true);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -104,25 +105,14 @@ function CourseEnrol() {
       showInvalidSem();
     } else {
       showCourseConfirmation()
-      // getAvailableCourses(currentUser)  
-      if(courses.includes(course)) {
-        setEnrolled([...enrolled, coursesDicts.find(dict=>{
-          return dict.course_name === course
-        })]
-        )
-        console.log(enrolled)
-        // coursesDicts.map((courseDict)=> {
-        //   if (courseDict.course_name===course) {
-        //     // enrolled.push(courseDict)
-        //     // console.log(enrolled)
-        //     setEnrolled(...courseDict)
-        //     console.log(enrolled)
-        //     return courseDict
-        //   } else {
-        //     return 'Error'
-        //   }
-        // })
-      }  
+      setEnrolled([...enrolled, coursesDicts.find(dict=>{
+        return dict.course_name === course
+        // if (enrolled.includes(dict)) {
+        //   return dict.course_name === course
+        // } else {
+        //   return ''
+        // }
+      })]) 
     }
   } 
  
@@ -133,6 +123,7 @@ function CourseEnrol() {
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
       if (data.success === true) {
+        setLoading(false)
         setCourseDicts(data.data)       
         setCourses(data.data.map((courseList)=>{          
           return(courseList.course_name)       
@@ -195,7 +186,11 @@ function CourseEnrol() {
       </Button> 
       <br />
       <br />
-      <DataTable  data={enrolled}/>
+      {loading ? (
+        <Spinner />
+      ) : (<DataTable  data={enrolled}/>)}
+
+      {/* <DataTable  data={enrolled}/> */}
     </div>
   );
 }

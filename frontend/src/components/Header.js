@@ -29,7 +29,7 @@ function Header() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link onClick={() => navigate("/")}>Home</Nav.Link>
-            <Nav.Link onClick={() => navigate("/enrol")}>Enrol</Nav.Link>
+            <Nav.Link onClick={() => navigate("/enrol")}>Enrollment</Nav.Link>
             {currentUser !== null && (
               <Nav.Link onClick={() => navigate("/admin")}>Admin</Nav.Link>
             )}
