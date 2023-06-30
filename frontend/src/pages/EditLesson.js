@@ -31,6 +31,7 @@ const temp_questions = [
 function EditLesson() {
   const [videoUrl, setVideoUrl] = useState(null);
   const [questions, setQuestions] = useState(temp_questions);
+  const [transcript, setTranscript] = useState("");
   const videoRef = useRef(null);
 
   function handleChange(e, i) {
@@ -52,6 +53,9 @@ function EditLesson() {
         method: "POST",
         body: data,
       });
+      const json = await res.json();
+      console.log("JSON, ", json.data.text);
+      setTranscript(json.data.text);
       console.log(res);
     } catch (e) {
       console.log(e);
@@ -124,7 +128,12 @@ function EditLesson() {
           <Form>
             <Form.Group className="mb-3" controlId="formTranscript">
               <Form.Label>Transcript</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+              />
             </Form.Group>
           </Form>
         </div>

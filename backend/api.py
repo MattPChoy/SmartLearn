@@ -1,6 +1,8 @@
 from database import Database
 import os
 from flask import request
+from vidtotext import transcribe
+
 
 SUCCESS = "success"
 REASON = "reason"
@@ -179,7 +181,7 @@ class API:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
         query=f"""
-        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id,
+        SELECT Courses.name, Offerings.year, Offerings.semester,
         Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName,
         Organisations.name as OrganisationName
@@ -196,7 +198,7 @@ class API:
         res = self.db.query(query)
         print(res)
 
-        col = ["course_name", "description", "year", "semester", "offering_id", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        col = ["course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
@@ -204,14 +206,15 @@ class API:
 
     def upload_video(self, request_files):
         """Upload a file."""
-        file_name = request_files["video"].filename
-
+        file_name = os.path.join(UPLOAD_DIRECTORY, request_files["video"].filename)
+        print(file_name)
         #save video to file
-        with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
+        with open(file_name, "wb") as fp:
             fp.write(request_files["video"].read())
 
-        return {SUCCESS: True}
+        transcript = transcribe(file_name)
 
+        return {SUCCESS: True, "data": transcript}
         # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
         #     fp.write(request_files["file"].read())
         # return {SUCCESS: True}
@@ -287,7 +290,7 @@ class API:
             return {SUCCESS: False, REASON: "Offering or lesson ID not of integer form."}
 
         query = f"""
-        SELECT Lessons.date, Lessons.fp, 
+        SELECT Lessons.date, Lessons.fp,
         """
 
 
