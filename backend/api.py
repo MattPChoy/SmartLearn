@@ -173,7 +173,7 @@ class API:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
         query=f"""
-        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id
+        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id,
         Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName,
         Organisations.name as OrganisationName
@@ -253,6 +253,5 @@ class API:
     def get_classes(self, request_body):
         if not "offering_id" in request_body:
             return {SUCCESS: False, REASON: "offering_id field not in request"}
-
     # lesson_name, lesson_id, lesson_date
     # video_fp, transcript, questions_json
