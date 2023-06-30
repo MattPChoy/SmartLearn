@@ -1,19 +1,19 @@
 import React from "react";
 import AutoComplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
+import DataTable from "../components/DataTable";
 
 function CourseEnrol() {
   const { currentUser } = useAuth();
-  const courses = ["DECO2500", "ELEC2301", "MATH6969"];
+  // const courses = [];
   const semesters = [1, 2, 3];
   const year = 2023;
 
@@ -22,7 +22,11 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  // const [courses, setCourses] = useState([])
+  const [courses, setCourses] = useState([])
+  const [coursesDicts, setCourseDicts] = useState([])
+  const [enrolled, setEnrolled] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [offeringID, setOfferingID] = useState([]) 
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -71,7 +75,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    );
+    ); 
   }
 
   /** Course confirmation pop up*/
@@ -94,84 +98,72 @@ function CourseEnrol() {
     );
   }
 
-  function CourseTable() {
-    return (
-      <Table striped>
-        <thead>
-          <tr>
-            <th>Course ID</th>
-            <th>Course Title</th>
-            <th>Course Coordinator</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>c1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-          </tr>
-        </tbody>
-      </Table>
-    );
-  }
-
   /* Submit button event and error handle*/
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     if (!courses.includes(course)) {
       showInvalidCourse();
     } else if (semester.length === 0) {
-      console.log(semester.length);
       showInvalidSem();
     } else {
-      // fetch("http://localhost:5000/api/enrol", {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     courseID: course,
-      //     semNo: semNo,
-      //     year: year
-      //   }),
-      //   headers: {'Content-Type':'application/json'},
-      // })
-
       showCourseConfirmation()
-      // console.log(semester)
-      // console.log(course)
-      // const data = getAvailableCourses(currentUser)
-      
+      enrol(1)
+      setEnrolled([...enrolled, coursesDicts.find(dict=>{
+        return dict.course_name === course
+      })])
     }
-  }
-
-  // function optionReturn() {
-  //   if (course === "") {
-  //     return { courses };
-  //   }
-  // }
-
+  } 
+ 
   /** fetching course details */
   function getAvailableCourses(student_id) {
-    fetch(`http://localhost:5000/api/availableCourses?id=${student_id}`, {
+    fetch(`http://localhost:5000/api/availableCourses?student_id=${student_id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
-      // console.log(data)
       if (data.success === true) {
-        // console.log(courses)
-        Object.values(data)[0].map((courseList)=>{
-          if (!courses.includes(courseList.course_name)) {
-            courses.push(courseList.course_name) 
-            console.log(courseList.course_nam)
-          }                   
-        })
-        return data
+        setLoading(false)
+        setCourseDicts(data.data)       
+        setCourses(data.data.map((courseList)=>{          
+          return(courseList.course_name)       
+        }))
+      } else {
+        console.log("Request failed")
       }
-      console.log("Request failed")
     })
   }
 
-  useEffect(()=>{
-    getAvailableCourses(currentUser)
-    console.log('hello')
-  })
+  /**enrol courses */
+  function enrol(student_id) {
+    fetch(`http://localhost:5000/api/enrol?student_id=${student_id}`, {
+      method: "POST",
+      body: JSON.stringify({
+        student_id: student_id,
+        offering_id: offeringID
+      }),
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => response.json()).then((data) => {
+      console.log(data.success)
+      console.log(data.reason)
+      if (data.success === true) {
+        setLoading(false)
+        console.log(data.data)
+      }
+    })
+  }
+
+  /**Render th courses */
+  useEffect(() => {
+    getAvailableCourses(1)
+  }, [])
+
+  function inputChange(_, newValue) { 
+    setCourse(newValue)
+    console.log(newValue)
+    const test = coursesDicts.find(dict=>{
+      return dict.course_name === newValue
+    })
+    setOfferingID(test.offering_id)
+    console.log(offeringID) 
+  }
 
   /**Create page components */
   return (    
@@ -179,14 +171,14 @@ function CourseEnrol() {
       <h1>Course Enrol</h1>
       <InvalidCourse />
       <InvalidSemester />
-      <CourseConfirmation />
+      {/* <CourseConfirmation /> */}
       <AutoComplete
         className="w-100"
         disablePortal
         id="combo-box-demo"
         options={courses}
         value={course}
-        onInputChange={(_, newValue) => setCourse(newValue)}
+        onInputChange={inputChange}
         sx={{ width: 300 }}
         renderInput={(params) => (
           <TextField {...params} label="Select Course" />
@@ -217,10 +209,12 @@ function CourseEnrol() {
         onClick={async () => await handleSubmit()}
       >
         Sign away your life
-      </Button>
+      </Button> 
       <br />
       <br />
-      <CourseTable />
+      {loading ? (
+        <Spinner />
+      ) : (<DataTable  data={enrolled}/>)}
     </div>
   );
 }

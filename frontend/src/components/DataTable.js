@@ -1,25 +1,33 @@
+import { toUnitless } from "@mui/material/styles/cssUtils";
 import React from "react";
+import Table from "react-bootstrap/Table";
 
-function DataTable({ data }) {
+function DataTable( {data} ) {
+  const fieldTitle = ['Course Code', 'Course Title', 'Coordinate Name', 'Attending Semester']
   return (
-    <div className="DataTable">
-      <table>
+
+    <Table striped TableHeaderColumn width={'80%'}>
+      <thead>
         <tr>
-          {Object.keys(data[0]).map((key) => (
-            <th key={key}>{key}</th>
-          ))}
+          {fieldTitle.map((title, index)=>{
+            return(
+              <th key={index}>
+                {title}
+              </th>
+            )            
+          })}
         </tr>
-        {data.map((course) => (
-          course.map((row) =>
-            <tr>
-              {Object.values(row).map((value, index) => (
-                <td key={index}>{value}</td>
-              ))}
-            </tr>
-          )
-        ))}
-      </table>
-    </div>
+      </thead>
+      {data.map((courseList, index) => (
+        <tr>
+          <td key={index}>{courseList.course_name}</td>
+          <td key={index+1}>{courseList.description}</td>
+          <td key={index+2}>{`${courseList.coordinator_firstname} ${courseList.coordinator_lastname}`}</td>
+          <td key={index+3}>{`Semester ${courseList.semester}-${courseList.year}`}</td>
+        </tr>
+      ))}
+    </Table>
+
   );
 }
 
