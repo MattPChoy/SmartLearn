@@ -27,6 +27,7 @@ function CourseEnrol() {
   const [enrolled, setEnrolled] = useState([])
   const [loading, setLoading] = useState(true);
   const [offeringID, setOfferingID] = useState([])
+  const [selectedCourse, setSelectedCourse] = useState([])  
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -99,20 +100,21 @@ function CourseEnrol() {
   }
 
   /* Submit button event and error handle*/
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     if (!courses.includes(course)) {
       showInvalidCourse();
     } else if (semester.length === 0) {
       showInvalidSem();
     } else {
       showCourseConfirmation()
-      enrol()
+      enrol(1)
       setEnrolled([...enrolled, coursesDicts.find(dict=>{
         return dict.course_name === course
       })])
-
-      setOfferingID(course)
-      console.log(offeringID)
+      
+      // setSelectedCourse(coursesDicts.find(dict=>{
+      //   return dict.course_name === course
+      // }))     
     }
   } 
  
@@ -135,15 +137,18 @@ function CourseEnrol() {
     })
   }
 
+  /**enrol courses */
   function enrol(student_id) {
     fetch(`http://localhost:5000/api/enrol?student_id=${student_id}`, {
       method: "POST",
       body: JSON.stringify({
-        id: student_id,
+        student_id: student_id,
+        offering_id: offeringID
       }),
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
       console.log(data.success)
+      console.log(data.reason)
       if (data.success === true) {
         setLoading(false)
         console.log(data.data)
@@ -155,6 +160,16 @@ function CourseEnrol() {
   useEffect(() => {
     getAvailableCourses(1)
   }, [])
+
+  function inputChange(_, newValue) { 
+    setCourse(newValue)
+    console.log(newValue)
+    const test = coursesDicts.find(dict=>{
+      return dict.course_name === newValue
+    })
+    setOfferingID(test.offering_id)
+    console.log(offeringID) 
+  }
 
   /**Create page components */
   return (    
@@ -169,7 +184,7 @@ function CourseEnrol() {
         id="combo-box-demo"
         options={courses}
         value={course}
-        onInputChange={(_, newValue) => setCourse(newValue)}
+        onInputChange={inputChange}
         sx={{ width: 300 }}
         renderInput={(params) => (
           <TextField {...params} label="Select Course" />
