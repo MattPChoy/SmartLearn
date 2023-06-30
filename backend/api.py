@@ -173,7 +173,7 @@ class API:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
         query=f"""
-        SELECT Courses.name, Offerings.year, Offerings.semester,
+        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester,
         Coordinators.firstname as CoordinatorFirstName,
         Coordinators.lastname as CoordinatorLastName,
         Organisations.name as OrganisationName
@@ -190,7 +190,7 @@ class API:
         res = self.db.query(query)
         print(res)
 
-        col = ["course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        col = ["course_name", "description", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
@@ -249,4 +249,8 @@ class API:
 
         cols = ["firstname", "lastname", "email", "phone"]
         return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
+    
+    # def get_classes(self, request_body):
 
+    # lesson_name, lesson_id, lesson_date
+    # video_fp, transcript, questions_json
