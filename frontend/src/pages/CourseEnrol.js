@@ -26,8 +26,7 @@ function CourseEnrol() {
   const [coursesDicts, setCourseDicts] = useState([])
   const [enrolled, setEnrolled] = useState([])
   const [loading, setLoading] = useState(true);
-  const [offeringID, setOfferingID] = useState([])
-  const [selectedCourse, setSelectedCourse] = useState([])  
+  const [offeringID, setOfferingID] = useState([]) 
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -111,10 +110,6 @@ function CourseEnrol() {
       setEnrolled([...enrolled, coursesDicts.find(dict=>{
         return dict.course_name === course
       })])
-      
-      // setSelectedCourse(coursesDicts.find(dict=>{
-      //   return dict.course_name === course
-      // }))     
     }
   } 
  
@@ -125,7 +120,6 @@ function CourseEnrol() {
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
       if (data.success === true) {
-        // console.log(data.data)
         setLoading(false)
         setCourseDicts(data.data)       
         setCourses(data.data.map((courseList)=>{          
@@ -221,8 +215,6 @@ function CourseEnrol() {
       {loading ? (
         <Spinner />
       ) : (<DataTable  data={enrolled}/>)}
-
-      {/* <DataTable  data={enrolled}/> */}
     </div>
   );
 }
