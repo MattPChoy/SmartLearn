@@ -12,6 +12,7 @@ CURR_YEAR = 2023
 CURR_SEMESTER = 2
 UPLOAD_DIRECTORY = "./videos"
 QUESTIONS_FILE = "./questions.json"
+# "comp4702-2023-2/lesson2"
 
 REGISTER_FIELDS = ["id", "firstname", "surname", "password", "email"]
 
@@ -51,6 +52,8 @@ class API:
             return self.get_profile(request_body)
         if _path[0] == "getLesson" and request_method == "GET":
             return self.get_lesson_info(request_body)
+        if _path[0] == "lessonData" and request_method == "GET":
+            return self.get_lesson_data(request_body)
 
         # 2 End points, 1) of_id -> lessonNum, date, blurb
         # of_id -> lesson_name, lesson_id, lesson_date
@@ -281,22 +284,39 @@ class API:
         return {SUCCESS: True, DATA: data}
 
     def get_lesson_data(self, request_body):
-        for field in  ["offering_id", "lesson_num"]:
+        for field in  ["offering_id", "lesson_num", "fp"]:
             if field not in request_body:
                 return {SUCCESS: False, REASON: f"{field} field not in request"}
 
         try:
             offering_id = request_body.get('offering_id')
-            lesson_id = request_body.get('lesson_id')
+            lesson_id = request_body.get('lesson_num')
         except ValueError:
             return {SUCCESS: False, REASON: "Offering or lesson ID not of integer form."}
 
         # Gets JSON
-        f = open(QUESTIONS_FILE)
-        query = f"""
-        SELECT Lessons.date, Lessons.fp,
-        """
+        fp = request_body.get('fp')
+        path = f"{os.path.dirname(__file__)}/static/{fp[2:-1]}/questions.json"
+        print(path)
+        questions = json.load(open(path))
+        print(questions)
 
+        query = f"""
+        SELECT Lessons.date, Lessons.fp
+        FROM Lessons
+        WHERE {offering_id} = offering_id AND {lesson_id} = lesson_num
+        """
+        print(query)
+        res = self.db.query(query)
+        # Query = [(lesson_data, lesson_fp)]
+        [(lesson_date, lesson_fp)] = res
+        output = {
+            "date": lesson_date,
+            "video_fp": lesson_fp,
+            "questions": questions
+        }
+
+        return {SUCCESS: True, DATA: output}
 
 
 
