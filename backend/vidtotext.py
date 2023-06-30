@@ -16,8 +16,8 @@ def transcribe(path):
     return transcript
 
 
-if __name__ == "__main__":
-    print(transcribe("./videos/videoplayback.mp4"))
+# if __name__ == "__main__":
+#     print(transcribe("./videos/videoplayback.mp4"))
 
 
 
