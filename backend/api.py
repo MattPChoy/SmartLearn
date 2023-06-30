@@ -28,7 +28,6 @@ class API:
         """
         _path = path.split("/")
 
-
         # json {success: bool, reason: str}
         # path = [auth, ]
         print(_path)
@@ -74,7 +73,7 @@ class API:
         print(query)
         res = self.db.query(query)
 
-            # expected res = [(password)]
+        # expected res = [(password)]
         if (not res) or (len(res) != 1):
             return {SUCCESS: False, REASON: "This account is not registered."}
 
@@ -95,7 +94,8 @@ class API:
         if not self.student_in_db(id):
             return {SUCCESS: False, REASON: "Student is already registered."}
 
-        self.db.add(f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
+        self.db.add(
+            f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
         return {SUCCESS: True}
 
     def enrol(self, request_body):
@@ -118,20 +118,23 @@ class API:
         if self.is_enrolled(student_id, offering_id):
             return {SUCCESS: False, REASON: "Student is already enrolled."}
 
-        self.db.add(f'''INSERT INTO Enrolments VALUES({student_id}, {offering_id})''', save=True)
+        self.db.add(
+            f'''INSERT INTO Enrolments VALUES({student_id}, {offering_id})''', save=True)
         return {SUCCESS: True}
 
-
     def student_in_db(self, student_id):
-        res = self.db.query(f"""SELECT id FROM Users WHERE {student_id} == id""")
+        res = self.db.query(
+            f"""SELECT id FROM Users WHERE {student_id} == id""")
         return res and res[0]
 
     def offering_in_db(self, offering_id):
-        res = self.db.query(f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
+        res = self.db.query(
+            f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
         return res and res[0]
 
     def is_enrolled(self, student_id, offering_id):
-        res = self.db.query(f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
+        res = self.db.query(
+            f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
         return res and res[0][0]
 
     def unenrol(self, request_body):
@@ -154,42 +157,54 @@ class API:
         if not self.is_enrolled(student_id, offering_id):
             return {SUCCESS: False, REASON: "Student is not enrolled"}
 
-        self.db.query(f'''DELETE FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id''')
+        self.db.query(
+            f'''DELETE FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id''')
         return {SUCCESS: True}
 
-
     def get_courses(self, request_body):
-        res = self.db.query(f"SELECT Offerings.year, Offerings.semester, Courses.name, Coordinators.firstname, Coordinators.lastname FROM Enrolments \
-            JOIN Users ON Enrolments.student_id=Users.id \
-            JOIN Offerings on Offerings.id=Enrolments.offering_id \
-            JOIN Courses on Courses.id=Offerings.course_id \
-            JOIN Coordinators on Coordinators.id=Offerings.coordinator_id \
-            WHERE Enrolments.student_id={request_body['student_id']}")
+        # res = self.db.query(f"SELECT Offerings.year, Offerings.semester, Courses.name, Coordinators.firstname, Coordinators.lastname FROM Enrolments \
+        #     JOIN Users ON Enrolments.student_id=Users.id \
+        #     JOIN Offerings on Offerings.id=Enrolments.offering_id \
+        #     JOIN Courses on Courses.id=Offerings.course_id \
+        #     JOIN Coordinators on Coordinators.id=Offerings.coordinator_id \
+        #     WHERE Enrolments.student_id={request_body['student_id']}")
+
+        if "student_id" not in request_body:
+            return {SUCCESS: False, REASON: "Missing student_id field."}
+
+        res = self.db.query(f"""
+                            SELECT Offerings.year, Offerings.semester,
+            (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_firstname,
+            (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_lastname
+            FROM Enrolments 
+            JOIN Offerings on Offerings.id=Enrolments.offering_id
+            JOIN Users ON Enrolments.student_id=Users.id
+            WHERE Enrolments.student_id={request_body['student_id']}
+        """)
 
         result = list()
-        col_names = ["year", "semester", "course_name", "coordinator_firstname", "coordinator_lastname"]
+        col_names = ["year", "semester", "coordinator_firstname", "coordinator_lastname"]
         for row in res:
             result.append(dict(zip(col_names, row)))
 
         return {SUCCESS: True, DATA: result}
 
     def get_available_courses(self, request_body):
-        if "id" not in request_body:
-            return {SUCCESS: False, REASON: "ID not found in the request."}
+        if "student_id" not in request_body:
+            return {SUCCESS: False, REASON: "student_id not found in the request."}
 
         try:
-            id = int(request_body["id"])
+            id = int(request_body["student_id"])
         except ValueError:
-            return {SUCCESS: False, REASON: "ID not of integer form."}
+            return {SUCCESS: False, REASON: "student_id not of integer form."}
 
-        query=f"""
-        SELECT Courses.desc, Courses.name, Offerings.year, Offerings.semester,
-        Coordinators.firstname as CoordinatorFirstName,
-        Coordinators.lastname as CoordinatorLastName,
+        query = f"""
+        SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id,
+        (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_firstname,
+	    (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_lastname,
         Organisations.name as OrganisationName
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
-        JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
         JOIN Organisations ON Organisations.id=Courses.org_id
         WHERE year=2023 AND semester=2 AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
@@ -200,7 +215,8 @@ class API:
         res = self.db.query(query)
         print(res)
 
-        col = ["description", "course_name", "year", "semester", "coordinator_firstname", "coordinator_lastname", "organisation_name"]
+        col = ["course_name", "description", "year", "semester", "offering_id",
+               "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
@@ -208,10 +224,10 @@ class API:
 
     def upload_video(self, request_files):
         """Upload a file."""
-        file_name = os.path.join(UPLOAD_DIRECTORY, request_files["video"].filename)
-        print(file_name)
-        #save video to file
-        with open(file_name, "wb") as fp:
+        file_name = request_files["video"].filename
+
+        # save video to file
+        with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
             fp.write(request_files["video"].read())
 
         transcript = transcribe(file_name)
@@ -223,11 +239,11 @@ class API:
 
     def get_currently_enrolled(self, request_body):
         print(request_body)
-        if "id" not in request_body:
+        if "student_id" not in request_body:
             return {SUCCESS: False, REASON: "ID not found in the request."}
 
         try:
-            id = int(request_body["id"])
+            id = int(request_body["student_id"])
         except ValueError:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
@@ -237,31 +253,35 @@ class API:
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
         res = self.db.query(f"""
-            SELECT Coordinators.firstname, Coordinators.lastname, Courses.name, Courses.desc FROM Enrolments
+            SELECT 
+                (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_fname,
+	            (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_sname,
+                Courses.name, Courses.desc FROM Enrolments
             JOIN Offerings ON Enrolments.offering_id=Offerings.id
-            JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
             JOIN Courses ON Offerings.course_id=Courses.id
             WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
 
-        cols = ["coordinator_firstname", "coordinator_lastname", "course_name", "course_desc"]
+        cols = ["coordinator_firstname", "coordinator_lastname",
+                "course_name", "course_desc"]
         _res = list()
         for row in res:
             _res.append(dict(zip(cols, row)))
-        return {SUCCESS:True, DATA:_res}
+        return {SUCCESS: True, DATA: _res}
 
     def get_profile(self, request_body):
         if not "student_id" in request_body:
             return {SUCCESS: False, REASON: "Missing student id"}
 
-        res = self.db.query(f"SELECT fname, sname, email FROM Users WHERE id={request_body['student_id']}")
+        res = self.db.query(
+            f"SELECT fname, sname, email FROM Users WHERE id={request_body['student_id']}")
 
         if len(res) != 1:
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
         cols = ["firstname", "lastname", "email", "phone"]
-        return {SUCCESS: True, DATA: dict(zip(cols, res[0]))}
+        return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
 
-    def get_lesson_info(self, request_body):
+    def get_classes(self, request_body):
         if not "offering_id" in request_body:
             return {SUCCESS: False, REASON: "offering_id field not in request"}
 
