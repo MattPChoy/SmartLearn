@@ -26,6 +26,7 @@ function CourseEnrol() {
   const [coursesDicts, setCourseDicts] = useState([])
   const [enrolled, setEnrolled] = useState([])
   const [loading, setLoading] = useState(true);
+  const [offeringID, setOfferingID] = useState([])
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -105,24 +106,24 @@ function CourseEnrol() {
       showInvalidSem();
     } else {
       showCourseConfirmation()
+      enrol()
       setEnrolled([...enrolled, coursesDicts.find(dict=>{
         return dict.course_name === course
-        // if (enrolled.includes(dict)) {
-        //   return dict.course_name === course
-        // } else {
-        //   return ''
-        // }
-      })]) 
+      })])
+
+      setOfferingID(course)
+      console.log(offeringID)
     }
   } 
  
   /** fetching course details */
   function getAvailableCourses(student_id) {
-    fetch(`http://localhost:5000/api/availableCourses?id=${student_id}`, {
+    fetch(`http://localhost:5000/api/availableCourses?student_id=${student_id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
       if (data.success === true) {
+        // console.log(data.data)
         setLoading(false)
         setCourseDicts(data.data)       
         setCourses(data.data.map((courseList)=>{          
@@ -130,6 +131,22 @@ function CourseEnrol() {
         }))
       } else {
         console.log("Request failed")
+      }
+    })
+  }
+
+  function enrol(student_id) {
+    fetch(`http://localhost:5000/api/enrol?student_id=${student_id}`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: student_id,
+      }),
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => response.json()).then((data) => {
+      console.log(data.success)
+      if (data.success === true) {
+        setLoading(false)
+        console.log(data.data)
       }
     })
   }
