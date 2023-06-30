@@ -24,7 +24,7 @@ function CourseEnrol() {
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
   const [courses, setCourses] = useState([])
   const [coursesDicts, setCourseDicts] = useState([])
-  const [enrolled, setEnrolled] = useState(0)
+  const [enrolled, setEnrolled] = useState([])
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -104,18 +104,25 @@ function CourseEnrol() {
       showInvalidSem();
     } else {
       showCourseConfirmation()
-      getAvailableCourses(currentUser)  
+      // getAvailableCourses(currentUser)  
       if(courses.includes(course)) {
-        coursesDicts.map((courseDict)=> {
-          if (courseDict.course_name===course) {
-            setEnrolled(courseDict)
-            return courseDict
-          } else {
-            return 'Error'
-          }
-        })
+        setEnrolled([...enrolled, coursesDicts.find(dict=>{
+          return dict.course_name === course
+        })]
+        )
+        console.log(enrolled)
+        // coursesDicts.map((courseDict)=> {
+        //   if (courseDict.course_name===course) {
+        //     // enrolled.push(courseDict)
+        //     // console.log(enrolled)
+        //     setEnrolled(...courseDict)
+        //     console.log(enrolled)
+        //     return courseDict
+        //   } else {
+        //     return 'Error'
+        //   }
+        // })
       }  
-      console.log(enrolled)
     }
   } 
  
@@ -188,7 +195,7 @@ function CourseEnrol() {
       </Button> 
       <br />
       <br />
-      <DataTable data={[enrolled]} />
+      <DataTable  data={enrolled}/>
     </div>
   );
 }
