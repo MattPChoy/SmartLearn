@@ -179,7 +179,7 @@ class API:
                             SELECT Offerings.year, Offerings.semester,
             (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_firstname,
             (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_lastname
-            FROM Enrolments 
+            FROM Enrolments
             JOIN Offerings on Offerings.id=Enrolments.offering_id
             JOIN Users ON Enrolments.student_id=Users.id
             WHERE Enrolments.student_id={request_body['student_id']}
@@ -256,7 +256,7 @@ class API:
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
         res = self.db.query(f"""
-            SELECT 
+            SELECT
                 (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_fname,
 	            (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_sname,
                 Courses.name, Courses.desc FROM Enrolments
@@ -284,7 +284,7 @@ class API:
         cols = ["firstname", "lastname", "email", "phone"]
         return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
 
-    def get_classes(self, request_body):
+    def get_lesson_info(self, request_body):
         if not "offering_id" in request_body:
             return {SUCCESS: False, REASON: "offering_id field not in request"}
 
