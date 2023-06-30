@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In machine learning, what is the term used to denote the examples of input-output mappings?",
+    "options": [
+      "Features",
+      "Training set",
+      "Vectors",
+      "Regression"
+    ],
+    "answer": "Training set",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What type of problem is characterized by a continuous output in machine learning?",
+    "options": [
+      "Regression",
+      "Classification",
+      "Binary classification",
+      "Vectorization"
+    ],
+    "answer": "Regression",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What is the purpose of the kk-Nearest Neighbours algorithm?",
+    "options": [
+      "To determine feature importance",
+      "To visualize data",
+      "To classify data",
+      "To create decision trees"
+    ],
+    "answer": "To classify data",
+    "difficulty": "hard"
+  }
+]
