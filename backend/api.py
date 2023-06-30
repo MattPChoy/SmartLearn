@@ -163,7 +163,7 @@ class API:
             return {SUCCESS: False, REASON: "Missing student_id field."}
 
         res = self.db.query(f"""
-                            SELECT Offerings.year, Offerings.semester, Users.fname, Users.sname, Offerings.coordinator_id, 
+                            SELECT Offerings.year, Offerings.semester,
             (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_firstname,
             (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_lastname
             FROM Enrolments 
@@ -173,26 +173,25 @@ class API:
         """)
 
         result = list()
-        col_names = ["year", "semester", "course_name",
-                     "coordinator_firstname", "coordinator_lastname"]
+        col_names = ["year", "semester", "coordinator_firstname", "coordinator_lastname"]
         for row in res:
             result.append(dict(zip(col_names, row)))
 
         return {SUCCESS: True, "data": result}
 
     def get_available_courses(self, request_body):
-        if "id" not in request_body:
-            return {SUCCESS: False, REASON: "ID not found in the request."}
+        if "student_id" not in request_body:
+            return {SUCCESS: False, REASON: "student_id not found in the request."}
 
         try:
-            id = int(request_body["id"])
+            id = int(request_body["student_id"])
         except ValueError:
-            return {SUCCESS: False, REASON: "ID not of integer form."}
+            return {SUCCESS: False, REASON: "student_id not of integer form."}
 
         query = f"""
         SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id,
         (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_firstname,
-	    (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_lastname
+	    (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_lastname,
         Organisations.name as OrganisationName
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
@@ -229,11 +228,11 @@ class API:
 
     def get_currently_enrolled(self, request_body):
         print(request_body)
-        if "id" not in request_body:
+        if "student_id" not in request_body:
             return {SUCCESS: False, REASON: "ID not found in the request."}
 
         try:
-            id = int(request_body["id"])
+            id = int(request_body["student_id"])
         except ValueError:
             return {SUCCESS: False, REASON: "ID not of integer form."}
 
@@ -248,7 +247,6 @@ class API:
 	            (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_sname,
                 Courses.name, Courses.desc FROM Enrolments
             JOIN Offerings ON Enrolments.offering_id=Offerings.id
-            JOIN Coordinators ON Coordinators.id=Offerings.coordinator_id
             JOIN Courses ON Offerings.course_id=Courses.id
             WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
 
