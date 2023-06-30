@@ -8,7 +8,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import Table from "react-bootstrap/Table";
 import { useAuth } from "../helper/AuthContext";
 import DataTable from "../components/DataTable";
 
@@ -25,7 +24,7 @@ function CourseEnrol() {
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
   const [courses, setCourses] = useState([])
   const [coursesDicts, setCourseDicts] = useState([])
-  const [enrolled, setEnrolled] = useState([])
+  const [enrolled, setEnrolled] = useState(0)
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -97,27 +96,6 @@ function CourseEnrol() {
     );
   }
 
-  // function CourseTable() {
-  //   return (
-  //     <Table striped>
-  //       <thead>
-  //         <tr>
-  //           <th>Course ID</th>
-  //           <th>Course Title</th>
-  //           <th>Course Coordinator</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         <tr>
-  //           <td>c1</td>
-  //           <td>Mark</td>
-  //           <td>Otto</td>
-  //         </tr>
-  //       </tbody>
-  //     </Table>
-  //   );
-  // }
-
   /* Submit button event and error handle*/
   const handleSubmit = () => {
     if (!courses.includes(course)) {
@@ -128,18 +106,16 @@ function CourseEnrol() {
       showCourseConfirmation()
       getAvailableCourses(currentUser)  
       if(courses.includes(course)) {
-        // console.log(coursesDicts)
-        setEnrolled(coursesDicts.map((courseDict)=> {
-          // console.log(courseDict.course_name)
-          // console.log(course)
+        coursesDicts.map((courseDict)=> {
           if (courseDict.course_name===course) {
-            console.log(courseDict)
+            setEnrolled(courseDict)
             return courseDict
           } else {
             return 'Error'
           }
-        }))
+        })
       }  
+      console.log(enrolled)
     }
   } 
  
@@ -150,13 +126,8 @@ function CourseEnrol() {
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
       if (data.success === true) {
-        setCourseDicts(data.data)
-        // console.log(coursesDicts)
-        
-        setCourses(data.data.map((courseList)=>{
-          // courses.push(courseList.course_name) 
-          // return courseList.course_name
-          
+        setCourseDicts(data.data)       
+        setCourses(data.data.map((courseList)=>{          
           return(courseList.course_name)       
         }))
       } else {
@@ -176,7 +147,7 @@ function CourseEnrol() {
       <h1>Course Enrol</h1>
       <InvalidCourse />
       <InvalidSemester />
-      <CourseConfirmation />
+      {/* <CourseConfirmation /> */}
       <AutoComplete
         className="w-100"
         disablePortal
@@ -217,7 +188,7 @@ function CourseEnrol() {
       </Button> 
       <br />
       <br />
-      <DataTable data={enrolled} />
+      <DataTable data={[enrolled]} />
     </div>
   );
 }
