@@ -1,0 +1,57 @@
+[
+  {
+    "question": "What is the purpose of the Maximum Likelihood framework in statistics?",
+    "options": [
+      "To fit models to data",
+      "To classify data into categories",
+      "To minimize the difference between predicted and true values",
+      "To maximize the likelihood function"
+    ],
+    "answer": "To maximize the likelihood function",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What is the function used to squash the output of linear regression into the range [0,1] in logistic regression?",
+    "options": [
+      "Sigmoid function",
+      "ReLU function",
+      "Hyperbolic tangent function",
+      "Softmax function"
+    ],
+    "answer": "Sigmoid function",
+    "difficulty": "easy"
+  },
+  {
+    "question": "In binary classification, what does the decision boundary separate?",
+    "options": [
+      "Input and output variables",
+      "Training and testing data",
+      "The two classes",
+      "The predicted and true values"
+    ],
+    "answer": "The two classes",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Which loss function is commonly used for linear regression?",
+    "options": [
+      "Mean Absolute Error (MAE)",
+      "Mean Squared Error (MSE)",
+      "Cross-Entropy Loss",
+      "Hinge Loss"
+    ],
+    "answer": "Mean Squared Error (MSE)",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How can categorical input variables be handled in logistic regression?",
+    "options": [
+      "One-hot encoding",
+      "Feature scaling",
+      "Principal Component Analysis (PCA)",
+      "Regularization"
+    ],
+    "answer": "One-hot encoding",
+    "difficulty": "medium"
+  }
+]
