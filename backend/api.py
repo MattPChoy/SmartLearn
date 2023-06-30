@@ -4,6 +4,7 @@ from flask import request
 
 SUCCESS = "success"
 REASON = "reason"
+DATA = "data"
 CURR_YEAR = 2023
 CURR_SEMESTER = 2
 UPLOAD_DIRECTORY = "./videos"
@@ -44,7 +45,12 @@ class API:
             return self.unenrol(request_body)
         if _path[0] == "profile" and request_method == "GET":
             return self.get_profile(request_body)
+        if _path[0] == "getLesson" and request_method == "GET":
+            return self.get_lesson_info(request_body)
 
+        # 2 End points, 1) of_id -> lessonNum, date, blurb
+        # of_id -> lesson_name, lesson_id, lesson_date
+        # of_id, lesson_num -> video_fp, transcript, questions_json
         print(_path[0])
 
         return {SUCCESS: False, REASON: "Undefined behaviour"}
@@ -161,7 +167,7 @@ class API:
         for row in res:
             result.append(dict(zip(col_names, row)))
 
-        return {SUCCESS: True, "data": result}
+        return {SUCCESS: True, DATA: result}
 
     def get_available_courses(self, request_body):
         if "id" not in request_body:
@@ -194,7 +200,7 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
-        return {SUCCESS: True, "data": _res}
+        return {SUCCESS: True, DATA: _res}
 
     def upload_video(self, request_files):
         """Upload a file."""
@@ -236,7 +242,7 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(cols, row)))
-        return {SUCCESS:True, "data":_res}
+        return {SUCCESS:True, DATA:_res}
 
     def get_profile(self, request_body):
         if not "student_id" in request_body:
@@ -248,10 +254,45 @@ class API:
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
         cols = ["firstname", "lastname", "email", "phone"]
-        return {SUCCESS: True, "data": dict(zip(cols, res[0]))}
-    
-    def get_classes(self, request_body):
+        return {SUCCESS: True, DATA: dict(zip(cols, res[0]))}
+
+    def get_lesson_info(self, request_body):
         if not "offering_id" in request_body:
             return {SUCCESS: False, REASON: "offering_id field not in request"}
+
+        try:
+            id = request_body.get('offering_id')
+        except ValueError:
+            return {SUCCESS: False, REASON: "ID not of integer form."}
+
+        query = f"""
+        SELECT Lessons.blurb, Lessons.lesson_num, Lessons.date
+        FROM Lessons
+        WHERE offering_id = {id}
+        """
+        res = self.db.query(query)
+
+        data = [{"blurb": desc, "lesson_num": num, "date": date} for (desc, num, date) in res]
+        return {SUCCESS: True, DATA: data}
+
+    def get_lesson_data(self, request_body):
+        for field in  ["offering_id", "lesson_num"]:
+            if field not in request_body:
+                return {SUCCESS: False, REASON: f"{field} field not in request"}
+
+        try:
+            offering_id = request_body.get('offering_id')
+            lesson_id = request_body.get('lesson_id')
+        except ValueError:
+            return {SUCCESS: False, REASON: "Offering or lesson ID not of integer form."}
+
+        query = f"""
+        SELECT Lessons.date, Lessons.fp, 
+        """
+
+
+
+
+
     # lesson_name, lesson_id, lesson_date
-    # video_fp, transcript, questions_json
+    # offering_id, lesson_id ->  video_fp, transcript, questions_json
