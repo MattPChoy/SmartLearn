@@ -136,26 +136,12 @@ function CourseEnrol() {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     }).then((response) => response.json()).then((data) => {
-      if (data.success === true) {
-        setLoading(false)
-        setCourseDicts(data.data)
-        setCourses(data.data.map((courseList)=>{
-          return(courseList.course_name)
-        }))
-      } else {
-        console.log("Request failed")
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
         if (data.success === true) {
           setLoading(false);
           setCourseDicts(data.data);
-          setCourses(
-            data.data.map((courseList) => {
+          setCourses(data.data.map((courseList) => {
               return courseList.course_name;
-            })
-          );
+          }));
         } else {
           console.log("Request failed");
         }

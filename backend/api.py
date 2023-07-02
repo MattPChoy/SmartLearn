@@ -41,8 +41,6 @@ class API:
             return self.register(request_body)
         if _path[0] == "availableCourses" and request_method == "GET":
             return self.get_available_courses(request_body)
-        if _path[0] == "availableSemesters" and request_method == "GET":
-            return self.get_available_semesters(request_body)
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             return self.get_currently_enrolled(request_body)
         if _path[0] == "enrol" and request_method == "POST":
