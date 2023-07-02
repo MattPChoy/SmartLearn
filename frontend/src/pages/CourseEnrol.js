@@ -98,6 +98,20 @@ function CourseEnrol() {
     );
   }
 
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`
+      if (res.includes(offering["course_name"])) {
+        res[offering["course_name"]].push(sem)
+      }
+      else {
+        res[offering["course_name"]] = [sem]
+      }
+    }
+    return res;
+  }
+
   /* Submit button event and error handle*/
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
@@ -114,27 +128,20 @@ function CourseEnrol() {
         }),
       ]);
     }
-  };
+  }
 
   /** fetching course details */
   function getAvailableCourses(student_id) {
-    fetch(
-      `http://localhost:5000/api/availableCourses?student_id=${student_id}`,
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
+    fetch(`http://localhost:5000/api/availableCourses?student_id=${student_id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => response.json()).then((data) => {
         if (data.success === true) {
           setLoading(false);
           setCourseDicts(data.data);
-          setCourses(
-            data.data.map((courseList) => {
+          setCourses(data.data.map((courseList) => {
               return courseList.course_name;
-            })
-          );
+          }));
         } else {
           console.log("Request failed");
         }
@@ -168,23 +175,13 @@ function CourseEnrol() {
   }, []);
 
   function inputChange(_, newValue) {
-    setCourse(newValue);
-    console.log(newValue);
-    const test = coursesDicts.find((dict) => {
-      return dict.course_name === newValue;
-    });
-    setOfferingID(test.offering_id);
-    console.log(offeringID);
-  }
-
-  function inputChange(_, newValue) {
-    setCourse(newValue);
-    console.log(newValue);
-    const test = coursesDicts.find((dict) => {
-      return dict.course_name === newValue;
-    });
-    setOfferingID(test.offering_id);
-    console.log(offeringID);
+    setCourse(newValue)
+    console.log(newValue)
+    const test = coursesDicts.find(dict=>{
+      return dict.course_name === newValue
+    })
+    setOfferingID(test.offering_id)
+    console.log(offeringID)
   }
 
   /**Create page components */
