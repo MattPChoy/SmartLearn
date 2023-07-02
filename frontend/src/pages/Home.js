@@ -17,13 +17,15 @@ function Home() {
       } else {
         try {
           const res = await fetch(
-            `http://localhost:5000/api/currentlyEnrolled?id=${currentUser}`,
+            `http://localhost:5000/api/currentlyEnrolled?student_id=${currentUser}`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
             }
           );
+          console.log(res);
           const resObj = await res.json();
+          console.log(resObj);
           if (resObj.success === true) {
             setCourses(resObj.data);
             setLoading(false);

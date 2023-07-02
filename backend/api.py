@@ -1,7 +1,7 @@
 from database import Database
 import os
 from flask import request
-from ai_functions import transcribe
+from ai_functions import transcribe, generate_questions
 import json
 
 
@@ -44,12 +44,12 @@ class API:
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             return self.get_currently_enrolled(request_body)
         if _path[0] == "enrol" and request_method == "POST":
-            return self.enrol(request_body)
+            return self.handle_enrol(request_body)
         if _path[0] == "unenrol" and request_method == "POST":
             return self.unenrol(request_body)
         if _path[0] == "profile" and request_method == "GET":
             return self.get_profile(request_body)
-        if _path[0] == "getLesson" and request_method == "GET":
+        if _path[0] == "getLessons" and request_method == "GET":
             return self.get_lesson_info(request_body)
         if _path[0] == "lessonData" and request_method == "GET":
             return self.get_lesson_data(request_body)
@@ -101,17 +101,36 @@ class API:
             f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
         return {SUCCESS: True}
 
-    def enrol(self, request_body):
-        # Checks if id and password fields are in request
-        if not ("student_id" in request_body and "offering_id" in request_body):
-            return {SUCCESS: False, REASON: "Missing student or offering id"}
+    def handle_enrol(self, request_body):
+        fields = ["student_id", "course_id", "year", "semester"]
+        for field in fields:
+            if field not in request_body:
+                return {SUCCESS: False, REASON: "Missing {field} field in request."}
 
         try:
             student_id = int(request_body["student_id"])
-            offering_id = int(request_body["offering_id"])
+            year = int(request_body["year"])
+            semester =  int(request_body["semester"])
         except ValueError:
             return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
 
+
+        query = f"""
+        SELECT Offerings.id
+        FROM Offerings
+        WHERE Offerings.year = {year} AND Offerings.semester = {semester}
+        """
+        res = self.db.query(query)
+
+        if (not res) or (len(res) != 1) or res == [()]:
+            return {SUCCESS: False, REASON: "Year and semester does not uniquely make an offering id."}
+
+        [(offering_id,)] = res
+        print(f"{student_id}, {offering_id}.")
+        return self.enrol(student_id, offering_id)
+
+
+    def enrol(self, student_id, offering_id):
         if not self.student_in_db(student_id):
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
@@ -138,7 +157,7 @@ class API:
     def is_enrolled(self, student_id, offering_id):
         res = self.db.query(
             f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
-        return res and res[0][0]
+        return res and res[0]
 
     def unenrol(self, request_body):
         # Checks if id and password fields are in request
@@ -209,7 +228,7 @@ class API:
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Organisations ON Organisations.id=Courses.org_id
-        WHERE year=2023 AND semester=2 AND Offerings.id NOT IN (
+        WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
 	        FROM Enrolments
 	        WHERE {id} == Enrolments.student_id
@@ -245,9 +264,16 @@ class API:
         with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
             fp.write(request_files["video"].read())
 
-        transcript = transcribe(file_name)
+        transcript = transcribe(os.path.join(UPLOAD_DIRECTORY, file_name))
 
-        return {SUCCESS: True, "data": transcript}
+        # save transcript to file
+        with open(os.path.join(UPLOAD_DIRECTORY, file_name + ".txt"), "w") as fp:
+            fp.write(transcript)
+
+        # generate questions
+        questions = generate_questions(transcript)
+
+        return {SUCCESS: True, "data": {"questions": questions, "transcript": transcript}}
         # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
         #     fp.write(request_files["file"].read())
         # return {SUCCESS: True}
