@@ -107,7 +107,7 @@ class API:
         fields = ["student_id", "course_name", "year", "semester"]
         for field in fields:
             if field not in request_body:
-                return {SUCCESS: False, REASON: "Missing {field} field in request."}
+                return {SUCCESS: False, REASON: f"Missing {field} field in request."}
 
         try:
             student_id = int(request_body["student_id"])
