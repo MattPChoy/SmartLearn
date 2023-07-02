@@ -351,6 +351,7 @@ class API:
             output = {
                 "date": date,
                 "video_fp": fp,
+                "blurb": blurb,
                 "questions": questions
         }
         """
@@ -367,19 +368,31 @@ class API:
         # Gets JSONbackend/static/COMP4702-2023-2/lesson2/questions.json
 
         query = f"""
-        SELECT Lessons.fp, Lessons.date
+        SELECT Lessons.fp, Lessons.date, Lessons.blurb
         FROM Lessons
         WHERE {offering_id} = offering_id AND {lesson_id} = lesson_num
         """
         res = self.db.query(query)
         # Query = [(lesson_data, lesson_fp)]
-        [(fp, date)] = res
+        [(fp, date, blurb)] = res
         path = f"{os.path.dirname(__file__)}/static/{fp[2:-1]}/questions.json"
         questions = json.load(open(path))
 
         output = {
             "date": date,
             "video_fp": fp,
+            "blurb": blurb,
             "questions": questions
         }
         return {SUCCESS: True, DATA: output}
+
+    # coordinatir =>
+    # {
+    #     data:
+    #         [
+    #             {
+    #                 offering_id
+    #                 course_name
+    #             }
+    #         ]
+    # }
