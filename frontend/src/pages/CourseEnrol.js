@@ -44,6 +44,7 @@ function CourseEnrol() {
   /* handle form control change message*/
   const handleChange = (event) => {
     setOfferingSemester([event.target.value]);
+    console.log(offeringSemester[0]);
   };
 
   /** Invalid course pop up message*/
@@ -124,7 +125,7 @@ function CourseEnrol() {
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
       showInvalidCourse();
-    } else if (semester.length === 0) {
+    } else if (offeringSemester.length === 0) {
       showInvalidSem();
     } else {
       showCourseConfirmation();
@@ -133,7 +134,7 @@ function CourseEnrol() {
       setEnrolled([
         ...enrolled,
         coursesDicts.find((dict) => {
-          return dict.course_name === course;
+          return dict.course_name === course ;
         }),
       ]);
     }
