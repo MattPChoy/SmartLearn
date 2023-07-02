@@ -98,6 +98,32 @@ function CourseEnrol() {
     );
   }
 
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`;
+      if (res.includes(offering["course_name"])) {
+        res[offering["course_name"]].push(sem);
+      } else {
+        res[offering["course_name"]] = [sem];
+      }
+    }
+    return res;
+  }
+
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`;
+      if (res.includes(offering["course_name"])) {
+        res[offering["course_name"]].push(sem);
+      } else {
+        res[offering["course_name"]] = [sem];
+      }
+    }
+    return res;
+  }
+
   /* Submit button event and error handle*/
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
@@ -106,7 +132,8 @@ function CourseEnrol() {
       showInvalidSem();
     } else {
       showCourseConfirmation();
-      enrol(1);
+      console.log(coursesDicts);
+      // enrol(1)
       setEnrolled([
         ...enrolled,
         coursesDicts.find((dict) => {
@@ -132,7 +159,9 @@ function CourseEnrol() {
           setCourseDicts(data.data);
           setCourses(
             data.data.map((courseList) => {
-              return courseList.course_name;
+              if (!courses.includes(courseList.course_name)) {
+                return courseList.course_name;
+              }
             })
           );
         } else {
@@ -157,12 +186,11 @@ function CourseEnrol() {
         console.log(data.reason);
         if (data.success === true) {
           setLoading(false);
-          console.log(data.data);
         }
       });
   }
 
-  /**Render th courses */
+  /** Render th courses */
   useEffect(() => {
     getAvailableCourses(1);
   }, []);
@@ -174,20 +202,9 @@ function CourseEnrol() {
       return dict.course_name === newValue;
     });
     setOfferingID(test.offering_id);
-    console.log(offeringID);
   }
 
-  function inputChange(_, newValue) {
-    setCourse(newValue);
-    console.log(newValue);
-    const test = coursesDicts.find((dict) => {
-      return dict.course_name === newValue;
-    });
-    setOfferingID(test.offering_id);
-    console.log(offeringID);
-  }
-
-  /**Create page components */
+  /** Create page components */
   return (
     <div className="w-25">
       <h1>Course Enrol</h1>
