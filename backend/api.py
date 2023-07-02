@@ -1,7 +1,7 @@
 from database import Database
 import os
 from flask import request
-from ai_functions import transcribe
+from ai_functions import transcribe, generate_questions
 import json
 
 
@@ -233,9 +233,16 @@ class API:
         with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
             fp.write(request_files["video"].read())
 
-        transcript = transcribe(file_name)
+        transcript = transcribe(os.path.join(UPLOAD_DIRECTORY, file_name))
 
-        return {SUCCESS: True, "data": transcript}
+        # save transcript to file
+        with open(os.path.join(UPLOAD_DIRECTORY, file_name + ".txt"), "w") as fp:
+            fp.write(transcript)
+
+        # generate questions
+        questions = generate_questions(transcript)
+
+        return {SUCCESS: True, "data": {"questions": questions, "transcript": transcript}}
         # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
         #     fp.write(request_files["file"].read())
         # return {SUCCESS: True}
