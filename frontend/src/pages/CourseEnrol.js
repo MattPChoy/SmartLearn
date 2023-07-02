@@ -22,11 +22,11 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  const [courses, setCourses] = useState([])
-  const [coursesDicts, setCourseDicts] = useState([])
-  const [enrolled, setEnrolled] = useState([])
+  const [courses, setCourses] = useState([]);
+  const [coursesDicts, setCourseDicts] = useState([]);
+  const [enrolled, setEnrolled] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [offeringID, setOfferingID] = useState([]) 
+  const [offeringID, setOfferingID] = useState([]);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -75,7 +75,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    ); 
+    );
   }
 
   /** Course confirmation pop up*/
@@ -105,30 +105,43 @@ function CourseEnrol() {
     } else if (semester.length === 0) {
       showInvalidSem();
     } else {
-      showCourseConfirmation()
-      enrol(1)
-      setEnrolled([...enrolled, coursesDicts.find(dict=>{
-        return dict.course_name === course
-      })])
+      showCourseConfirmation();
+      console.log(coursesDicts);
+      // enrol(1)
+      setEnrolled([
+        ...enrolled,
+        coursesDicts.find((dict) => {
+          return dict.course_name === course;
+        }),
+      ]);
     }
-  } 
- 
+  };
+
   /** fetching course details */
   function getAvailableCourses(student_id) {
-    fetch(`http://localhost:5000/api/availableCourses?student_id=${student_id}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json()).then((data) => {
-      if (data.success === true) {
-        setLoading(false)
-        setCourseDicts(data.data)       
-        setCourses(data.data.map((courseList)=>{          
-          return(courseList.course_name)       
-        }))
-      } else {
-        console.log("Request failed")
+    fetch(
+      `http://localhost:5000/api/availableCourses?student_id=${student_id}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       }
-    })
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === true) {
+          setLoading(false);
+          setCourseDicts(data.data);
+          setCourses(
+            data.data.map((courseList) => {
+              if (!courses.includes(courseList.course_name)) {
+                return courseList.course_name;
+              }
+            })
+          );
+        } else {
+          console.log("Request failed");
+        }
+      });
   }
 
   /**enrol courses */
@@ -137,36 +150,36 @@ function CourseEnrol() {
       method: "POST",
       body: JSON.stringify({
         student_id: student_id,
-        offering_id: offeringID
+        offering_id: offeringID,
       }),
       headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json()).then((data) => {
-      console.log(data.success)
-      console.log(data.reason)
-      if (data.success === true) {
-        setLoading(false)
-        console.log(data.data)
-      }
     })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.success);
+        console.log(data.reason);
+        if (data.success === true) {
+          setLoading(false);
+        }
+      });
   }
 
-  /**Render th courses */
+  /** Render th courses */
   useEffect(() => {
-    getAvailableCourses(1)
-  }, [])
+    getAvailableCourses(1);
+  }, []);
 
-  function inputChange(_, newValue) { 
-    setCourse(newValue)
-    console.log(newValue)
-    const test = coursesDicts.find(dict=>{
-      return dict.course_name === newValue
-    })
-    setOfferingID(test.offering_id)
-    console.log(offeringID) 
+  function inputChange(_, newValue) {
+    setCourse(newValue);
+    console.log(newValue);
+    const test = coursesDicts.find((dict) => {
+      return dict.course_name === newValue;
+    });
+    setOfferingID(test.offering_id);
   }
 
-  /**Create page components */
-  return (    
+  /** Create page components */
+  return (
     <div className="w-25">
       <h1>Course Enrol</h1>
       <InvalidCourse />
@@ -209,12 +222,10 @@ function CourseEnrol() {
         onClick={async () => await handleSubmit()}
       >
         Sign away your life
-      </Button> 
+      </Button>
       <br />
       <br />
-      {loading ? (
-        <Spinner />
-      ) : (<DataTable  data={enrolled}/>)}
+      {loading ? <Spinner /> : <DataTable data={enrolled} />}
     </div>
   );
 }
