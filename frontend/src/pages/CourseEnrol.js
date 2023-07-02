@@ -22,9 +22,9 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  const [courses, setCourses] = useState([])
-  const [coursesDicts, setCourseDicts] = useState([])
-  const [enrolled, setEnrolled] = useState(0)
+  const [courses, setCourses] = useState([]);
+  const [coursesDicts, setCourseDicts] = useState([]);
+  const [enrolled, setEnrolled] = useState(0);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -73,7 +73,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    ); 
+    );
   }
 
   /** Course confirmation pop up*/
@@ -103,46 +103,50 @@ function CourseEnrol() {
     } else if (semester.length === 0) {
       showInvalidSem();
     } else {
-      showCourseConfirmation()
-      getAvailableCourses(currentUser)  
-      if(courses.includes(course)) {
-        coursesDicts.map((courseDict)=> {
-          if (courseDict.course_name===course) {
-            setEnrolled(courseDict)
-            return courseDict
+      showCourseConfirmation();
+      getAvailableCourses(currentUser);
+      if (courses.includes(course)) {
+        coursesDicts.map((courseDict) => {
+          if (courseDict.course_name === course) {
+            setEnrolled(courseDict);
+            return courseDict;
           } else {
-            return 'Error'
+            return "Error";
           }
-        })
-      }  
-      console.log(enrolled)
+        });
+      }
+      console.log(enrolled);
     }
-  } 
- 
+  };
+
   /** fetching course details */
   function getAvailableCourses(student_id) {
     fetch(`http://localhost:5000/api/availableCourses?id=${student_id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json()).then((data) => {
-      if (data.success === true) {
-        setCourseDicts(data.data)       
-        setCourses(data.data.map((courseList)=>{          
-          return(courseList.course_name)       
-        }))
-      } else {
-        console.log("Request failed")
-      }
     })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === true) {
+          setCourseDicts(data.data);
+          setCourses(
+            data.data.map((courseList) => {
+              return courseList.course_name;
+            })
+          );
+        } else {
+          console.log("Request failed");
+        }
+      });
   }
 
   /**Render th courses */
   useEffect(() => {
-    getAvailableCourses(1)
-  }, [])
+    getAvailableCourses(1);
+  }, []);
 
   /**Create page components */
-  return (    
+  return (
     <div className="w-25">
       <h1>Course Enrol</h1>
       <InvalidCourse />
@@ -185,7 +189,7 @@ function CourseEnrol() {
         onClick={async () => await handleSubmit()}
       >
         Sign away your life
-      </Button> 
+      </Button>
       <br />
       <br />
       <DataTable data={[enrolled]} />
