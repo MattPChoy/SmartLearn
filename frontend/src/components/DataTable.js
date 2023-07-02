@@ -2,10 +2,11 @@ import { toUnitless } from "@mui/material/styles/cssUtils";
 import React from "react";
 import Table from "react-bootstrap/Table";
 
-function DataTable({ data }) {
+function DataTable( {data} ) {
   const fieldTitle = ['Course Code', 'Course Title', 'Coordinate Name', 'Attending Semester']
   return (
-    <Table striped>
+
+    <Table striped TableHeaderColumn width={'80%'}>
       <thead>
         <tr>
           {fieldTitle.map((title, index)=>{
@@ -13,7 +14,7 @@ function DataTable({ data }) {
               <th key={index}>
                 {title}
               </th>
-            )
+            )            
           })}
         </tr>
       </thead>
