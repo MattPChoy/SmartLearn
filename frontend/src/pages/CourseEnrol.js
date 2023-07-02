@@ -22,11 +22,11 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  const [courses, setCourses] = useState([])
-  const [coursesDicts, setCourseDicts] = useState([])
-  const [enrolled, setEnrolled] = useState([])
+  const [courses, setCourses] = useState([]);
+  const [coursesDicts, setCourseDicts] = useState([]);
+  const [enrolled, setEnrolled] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [offeringID, setOfferingID] = useState([])
+  const [offeringID, setOfferingID] = useState([]);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -119,11 +119,14 @@ function CourseEnrol() {
     } else if (semester.length === 0) {
       showInvalidSem();
     } else {
-      showCourseConfirmation()
-      enrol(1)
-      setEnrolled([...enrolled, coursesDicts.find(dict=>{
-        return dict.course_name === course
-      })])
+      showCourseConfirmation();
+      enrol(1);
+      setEnrolled([
+        ...enrolled,
+        coursesDicts.find((dict) => {
+          return dict.course_name === course;
+        }),
+      ]);
     }
   }
 
@@ -142,7 +145,21 @@ function CourseEnrol() {
       } else {
         console.log("Request failed")
       }
-    })
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === true) {
+          setLoading(false);
+          setCourseDicts(data.data);
+          setCourses(
+            data.data.map((courseList) => {
+              return courseList.course_name;
+            })
+          );
+        } else {
+          console.log("Request failed");
+        }
+      });
   }
 
   /**enrol courses */
@@ -151,23 +168,25 @@ function CourseEnrol() {
       method: "POST",
       body: JSON.stringify({
         student_id: student_id,
-        offering_id: offeringID
+        offering_id: offeringID,
       }),
       headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json()).then((data) => {
-      console.log(data.success)
-      console.log(data.reason)
-      if (data.success === true) {
-        setLoading(false)
-        console.log(data.data)
-      }
     })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.success);
+        console.log(data.reason);
+        if (data.success === true) {
+          setLoading(false);
+          console.log(data.data);
+        }
+      });
   }
 
   /**Render th courses */
   useEffect(() => {
-    getAvailableCourses(1)
-  }, [])
+    getAvailableCourses(1);
+  }, []);
 
   function inputChange(_, newValue) {
     setCourse(newValue)
@@ -226,9 +245,7 @@ function CourseEnrol() {
       </Button>
       <br />
       <br />
-      {loading ? (
-        <Spinner />
-      ) : (<DataTable  data={enrolled}/>)}
+      {loading ? <Spinner /> : <DataTable data={enrolled} />}
     </div>
   );
 }

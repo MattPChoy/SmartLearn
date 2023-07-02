@@ -1,7 +1,7 @@
 from database import Database
 import os
 from flask import request
-#from vidtotext import transcribe
+from ai_functions import transcribe
 import json
 
 
