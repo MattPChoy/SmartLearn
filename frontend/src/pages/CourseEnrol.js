@@ -22,9 +22,9 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  const [courses, setCourses] = useState([]);
-  const [coursesDicts, setCourseDicts] = useState([]);
-  const [enrolled, setEnrolled] = useState([]);
+  const [courses, setCourses] = useState([]);;
+  const [coursesDicts, setCourseDicts] = useState([]);;
+  const [enrolled, setEnrolled] = useState([]);;
   const [loading, setLoading] = useState(true);
   const [offeringID, setOfferingID] = useState([]);
 
@@ -96,6 +96,20 @@ function CourseEnrol() {
         </Modal.Footer>
       </Modal>
     );
+  }
+
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`
+      if (res.includes(offering["course_name"])) {
+        res[offering["course_name"]].push(sem)
+      }
+      else {
+        res[offering["course_name"]] = [sem]
+      }
+    }
+    return res;
   }
 
   /* Submit button event and error handle*/
