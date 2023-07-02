@@ -1,7 +1,7 @@
 from database import Database
 import os
 from flask import request
-from vidtotext import transcribe
+#from vidtotext import transcribe
 import json
 
 
@@ -41,6 +41,8 @@ class API:
             return self.register(request_body)
         if _path[0] == "availableCourses" and request_method == "GET":
             return self.get_available_courses(request_body)
+        if _path[0] == "availableSemesters" and request_method == "GET":
+            return self.get_available_semesters(request_body)
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             return self.get_currently_enrolled(request_body)
         if _path[0] == "enrol" and request_method == "POST":
@@ -218,6 +220,18 @@ class API:
         res = self.db.query(query)
         print(res)
 
+        """
+        [
+            {
+                course_name: Arya,
+
+            },
+            {
+
+            }
+        ]
+        """
+
         col = ["course_name", "description", "year", "semester", "offering_id",
                "coordinator_firstname", "coordinator_lastname", "organisation_name"]
         _res = list()
@@ -268,6 +282,7 @@ class API:
                 "course_name", "course_desc"]
         _res = list()
         for row in res:
+            print(f"cols = {cols}, row = {row}, adding = {dict(zip(cols, row))}")
             _res.append(dict(zip(cols, row)))
         return {SUCCESS: True, DATA: _res}
 
@@ -304,42 +319,43 @@ class API:
         return {SUCCESS: True, DATA: data}
 
     def get_lesson_data(self, request_body):
-        for field in  ["offering_id", "lesson_num", "fp"]:
+        """
+        http://localhost:5000/api/lessonData?offering_id=1&lesson_num=1
+
+        {
+            SUCCESS = bool
+            output = {
+                "date": date,
+                "video_fp": fp,
+                "questions": questions
+        }
+        """
+        for field in  ["offering_id", "lesson_num"]:
             if field not in request_body:
                 return {SUCCESS: False, REASON: f"{field} field not in request"}
 
         try:
-            offering_id = request_body.get('offering_id')
-            lesson_id = request_body.get('lesson_num')
+            offering_id = int(request_body.get('offering_id'))
+            lesson_id = int(request_body.get('lesson_num'))
         except ValueError:
             return {SUCCESS: False, REASON: "Offering or lesson ID not of integer form."}
 
-        # Gets JSON
-        fp = request_body.get('fp')
-        path = f"{os.path.dirname(__file__)}/static/{fp[2:-1]}/questions.json"
-        print(path)
-        questions = json.load(open(path))
-        print(questions)
+        # Gets JSONbackend/static/COMP4702-2023-2/lesson2/questions.json
 
         query = f"""
-        SELECT Lessons.date, Lessons.fp
+        SELECT Lessons.fp, Lessons.date
         FROM Lessons
         WHERE {offering_id} = offering_id AND {lesson_id} = lesson_num
         """
-        print(query)
         res = self.db.query(query)
         # Query = [(lesson_data, lesson_fp)]
-        [(lesson_date, lesson_fp)] = res
+        [(fp, date)] = res
+        path = f"{os.path.dirname(__file__)}/static/{fp[2:-1]}/questions.json"
+        questions = json.load(open(path))
+
         output = {
-            "date": lesson_date,
-            "video_fp": lesson_fp,
+            "date": date,
+            "video_fp": fp,
             "questions": questions
         }
-
         return {SUCCESS: True, DATA: output}
-
-
-
-
-    # lesson_name, lesson_id, lesson_date
-    # offering_id, lesson_id ->  video_fp, transcript, questions_json
