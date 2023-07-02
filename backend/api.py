@@ -53,6 +53,8 @@ class API:
             return self.get_lesson_info(request_body)
         if _path[0] == "lessonData" and request_method == "GET":
             return self.get_lesson_data(request_body)
+        if _path[0] == "coordinatorCourses" and request_method == "GET":
+            return self.coordinator_courses(request_body)
 
         # 2 End points, 1) of_id -> lessonNum, date, blurb
         # of_id -> lesson_name, lesson_id, lesson_date
@@ -386,6 +388,30 @@ class API:
         }
         return {SUCCESS: True, DATA: output}
 
+    def coordinator_courses(self, request_body):
+        if "coordinator_id" not in request_body:
+            return {SUCCESS: False, REASON: "coordinator_id field not in request"}
+
+        try:
+            id = int(request_body.get('coordinator_id'))
+        except ValueError:
+            {SUCCESS: False, REASON: "coordinator_id not of integer form."}
+
+
+        if not self.student_in_db(id):
+            {SUCCESS: False, REASON: "coordinator_id not found as a user."}
+
+        query = f"""
+        SELECT Offerings.id, Courses.name, Courses.desc
+        FROM Offerings
+        JOIN Courses ON Courses.id = Offerings.id
+        WHERE Offerings.coordinator_id = {id}
+        """
+        res = self.db.query(query)
+
+        data = [{"offering_id": id, "course_name": course_name, "desc": desc} for (id, course_name, desc) in res]
+        return {SUCCESS: True, DATA: data}
+    
     # coordinatir =>
     # {
     #     data:
@@ -395,4 +421,5 @@ class API:
     #                 course_name
     #             }
     #         ]
+    #
     # }
