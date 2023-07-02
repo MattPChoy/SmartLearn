@@ -297,13 +297,13 @@ class API:
             SELECT
                 (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_fname,
 	            (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_sname,
-                Courses.name, Courses.desc FROM Enrolments
+                Courses.name, Courses.desc, Offerings.id FROM Enrolments
             JOIN Offerings ON Enrolments.offering_id=Offerings.id
             JOIN Courses ON Offerings.course_id=Courses.id
             WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
 
         cols = ["coordinator_firstname", "coordinator_lastname",
-                "course_name", "course_desc"]
+                "course_name", "course_desc", "offering_id"]
         _res = list()
         for row in res:
             print(f"cols = {cols}, row = {row}, adding = {dict(zip(cols, row))}")
