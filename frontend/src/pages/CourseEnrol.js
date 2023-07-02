@@ -111,6 +111,19 @@ function CourseEnrol() {
     return res;
   }
 
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`;
+      if (res.includes(offering["course_name"])) {
+        res[offering["course_name"]].push(sem);
+      } else {
+        res[offering["course_name"]] = [sem];
+      }
+    }
+    return res;
+  }
+
   /* Submit button event and error handle*/
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
