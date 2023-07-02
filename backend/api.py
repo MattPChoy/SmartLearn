@@ -104,7 +104,7 @@ class API:
         return {SUCCESS: True}
 
     def handle_enrol(self, request_body):
-        fields = ["student_id", "course_id", "year", "semester"]
+        fields = ["student_id", "course_name", "year", "semester"]
         for field in fields:
             if field not in request_body:
                 return {SUCCESS: False, REASON: "Missing {field} field in request."}
@@ -120,9 +120,12 @@ class API:
         query = f"""
         SELECT Offerings.id
         FROM Offerings
-        WHERE Offerings.year = {year} AND Offerings.semester = {semester}
+        JOIN Courses ON Offerings.course_id = Courses.id
+        WHERE Offerings.year = {year} AND Offerings.semester = {semester} AND Courses.name = "{request_body.get("course_name")}"
         """
+        print(query)
         res = self.db.query(query)
+        print(f"res = {res}")
 
         if (not res) or (len(res) != 1) or res == [()]:
             return {SUCCESS: False, REASON: "Year and semester does not uniquely make an offering id."}
