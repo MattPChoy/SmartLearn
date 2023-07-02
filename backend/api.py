@@ -49,7 +49,7 @@ class API:
             return self.unenrol(request_body)
         if _path[0] == "profile" and request_method == "GET":
             return self.get_profile(request_body)
-        if _path[0] == "getLesson" and request_method == "GET":
+        if _path[0] == "getLessons" and request_method == "GET":
             return self.get_lesson_info(request_body)
         if _path[0] == "lessonData" and request_method == "GET":
             return self.get_lesson_data(request_body)
