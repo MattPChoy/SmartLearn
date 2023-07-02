@@ -21,9 +21,12 @@ function App() {
             <Route path="/enrol" element={<CourseEnrol />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
-            <Route path="/:courseId/:lessonId" element={<Course />} />
-            <Route path="/:courseId" element={<Lessons />} />
-            <Route path="/admin/:courseId/:lessonId" element={<EditLesson />} />
+            <Route path="/:course_offering/:lessonId" element={<Course />} />
+            <Route path="/:course_offering" element={<Lessons />} />
+            <Route
+              path="/admin/:offeringId/:lessonId"
+              element={<EditLesson />}
+            />
             <Route path="*" element={<h1>Page Not Found</h1>} />
           </Routes>
         </Wrapper>

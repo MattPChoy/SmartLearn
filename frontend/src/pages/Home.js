@@ -39,7 +39,7 @@ function Home() {
     fetchData();
   }, [currentUser, navigate]);
 
-  function CourseCard({ code, name, coordinator }) {
+  function CourseCard({ code, name, coordinator, offering }) {
     return (
       <div className="CourseCard">
         <Accordion defaultActiveKey={code}>
@@ -50,7 +50,7 @@ function Home() {
                 <h3>{name}</h3>
                 <div className="CourseDescription">
                   <h6>{coordinator}</h6>
-                  <Link to={`/${code}`}>View</Link>
+                  <Link to={`/${code}_${offering}`}>View</Link>
                 </div>
               </div>
             </Accordion.Body>
@@ -74,6 +74,7 @@ function Home() {
               coordinator={
                 course.coordinator_firstname + " " + course.coordinator_lastname
               }
+              offering={course.offering_id}
             />
           ))}
         </Container>
