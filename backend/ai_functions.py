@@ -37,7 +37,7 @@ def transcribe(path):
     # Load the video file
     audio_file= open(path, "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    return transcript
+    return transcript.text
 
 def generate_questions(transcript):
     """
@@ -45,18 +45,6 @@ def generate_questions(transcript):
     :param transcript: String representing the transcript of a video.
     :return: List of questions.
     """
-
-    # response = openai.Completion.create(
-    #     engine="text-davinci-003",
-    #     prompt=f'{PROMPT}\n\n{transcript}',
-    #     temperature=1,
-    #     max_tokens=256,
-    #     top_p=1,
-    #     frequency_penalty=0,
-    #     presence_penalty=0,
-    #     n=1,
-    #     # prompt="say this is a test",
-    # )
 
     response = openai.Completion.create(
     model="text-davinci-003",
