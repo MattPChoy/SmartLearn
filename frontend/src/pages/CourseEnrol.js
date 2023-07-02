@@ -26,7 +26,7 @@ function CourseEnrol() {
   const [coursesDicts, setCourseDicts] = useState([])
   const [enrolled, setEnrolled] = useState([])
   const [loading, setLoading] = useState(true);
-  const [offeringID, setOfferingID] = useState([]) 
+  const [offeringID, setOfferingID] = useState([])
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -75,7 +75,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    ); 
+    );
   }
 
   /** Course confirmation pop up*/
@@ -98,6 +98,20 @@ function CourseEnrol() {
     );
   }
 
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`
+      if (res.includes(offering["course_name"])) {
+        res[offering["course_name"]].push(sem)
+      }
+      else {
+        res[offering["course_name"]] = [sem]
+      }
+    }
+    return res;
+  }
+
   /* Submit button event and error handle*/
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
@@ -111,8 +125,8 @@ function CourseEnrol() {
         return dict.course_name === course
       })])
     }
-  } 
- 
+  }
+
   /** fetching course details */
   function getAvailableCourses(student_id) {
     fetch(`http://localhost:5000/api/availableCourses?student_id=${student_id}`, {
@@ -121,9 +135,9 @@ function CourseEnrol() {
     }).then((response) => response.json()).then((data) => {
       if (data.success === true) {
         setLoading(false)
-        setCourseDicts(data.data)       
-        setCourses(data.data.map((courseList)=>{          
-          return(courseList.course_name)       
+        setCourseDicts(data.data)
+        setCourses(data.data.map((courseList)=>{
+          return(courseList.course_name)
         }))
       } else {
         console.log("Request failed")
@@ -155,18 +169,18 @@ function CourseEnrol() {
     getAvailableCourses(1)
   }, [])
 
-  function inputChange(_, newValue) { 
+  function inputChange(_, newValue) {
     setCourse(newValue)
     console.log(newValue)
     const test = coursesDicts.find(dict=>{
       return dict.course_name === newValue
     })
     setOfferingID(test.offering_id)
-    console.log(offeringID) 
+    console.log(offeringID)
   }
 
   /**Create page components */
-  return (    
+  return (
     <div className="w-25">
       <h1>Course Enrol</h1>
       <InvalidCourse />
@@ -209,7 +223,7 @@ function CourseEnrol() {
         onClick={async () => await handleSubmit()}
       >
         Sign away your life
-      </Button> 
+      </Button>
       <br />
       <br />
       {loading ? (
