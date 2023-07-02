@@ -27,6 +27,8 @@ function CourseEnrol() {
   const [enrolled, setEnrolled] = useState([]);
   const [loading, setLoading] = useState(true);
   const [offeringID, setOfferingID] = useState([]);
+  const [offeringSemester, setOfferingSemester] = useState([]);
+  const [allCourseSemesters, setAllCourseSemesters] = useState([0]);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -41,7 +43,7 @@ function CourseEnrol() {
 
   /* handle form control change message*/
   const handleChange = (event) => {
-    setSem(event.target.value);
+    setOfferingSemester([event.target.value]);
   };
 
   /** Invalid course pop up message*/
@@ -101,30 +103,24 @@ function CourseEnrol() {
   function parseSemesters(data) {
     const res = {};
     for (let offering of data) {
-      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`;
-      if (res.includes(offering["course_name"])) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}`;
+      if (offering["course_name"] in res) {
         res[offering["course_name"]].push(sem);
       } else {
         res[offering["course_name"]] = [sem];
       }
     }
+    setAllCourseSemesters(res);
+    console.log(res);
     return res;
   }
 
-  function parseSemesters(data) {
-    const res = {};
-    for (let offering of data) {
-      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}}`;
-      if (res.includes(offering["course_name"])) {
-        res[offering["course_name"]].push(sem);
-      } else {
-        res[offering["course_name"]] = [sem];
-      }
-    }
-    return res;
+  function getAvaliableSemesters(course) {
+    const semesters = allCourseSemesters;
+    setOfferingSemester(semesters[course]);
   }
 
-  /* Submit button event and error handle*/
+  /** Submit button event and error handle*/
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
       showInvalidCourse();
@@ -156,6 +152,7 @@ function CourseEnrol() {
       .then((data) => {
         if (data.success === true) {
           setLoading(false);
+          parseSemesters(data.data);
           setCourseDicts(data.data);
           setCourses(
             data.data.map((courseList) => {
@@ -196,6 +193,8 @@ function CourseEnrol() {
   }, []);
 
   function inputChange(_, newValue) {
+    getAvaliableSemesters(newValue);
+    console.log(offeringSemester);
     setCourse(newValue);
     console.log(newValue);
     const test = coursesDicts.find((dict) => {
@@ -229,13 +228,13 @@ function CourseEnrol() {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={semester}
+          value={offeringSemester}
           label="Semester"
           onChange={handleChange}
         >
-          {semesters.map((semester, index) => (
-            <MenuItem key={index} value={`${year}; ${semester}`}>
-              {`Semester ${semester}; ${year}`}
+          {offeringSemester.map((semester, index) => (
+            <MenuItem key={index} value={`${semester}`}>
+              {`${semester}`}
             </MenuItem>
           ))}
         </Select>
