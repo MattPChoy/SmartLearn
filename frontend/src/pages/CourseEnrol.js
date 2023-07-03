@@ -218,8 +218,8 @@ function CourseEnrol() {
       </FormControl>{" "}
       <br />
       <br />
-      <Button className="btn btn-dark w-100" onClick={handleSubmit}>
-        Sign away your life
+      <Button className="btn btn-primary w-100" onClick={handleSubmit}>
+        Kiss Shakes
       </Button>
       <br />
       <br />
