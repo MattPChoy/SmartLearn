@@ -10,15 +10,15 @@ Streamlining the development of online learning tools, thereby freeing up teache
 4. By implementing these objectives, the project aims to leverage the benefits of online teaching, ensuring deeper comprehension, personalized instruction, efficient resource allocation, and effective student progress tracking.
 
 ## 1.2 Definition of terms
-| Term     | Definition                                 |
-| -------- | ------------------------------------------ |
-| AI       | Artificial Intelligence                    |
-| GPT      | Generative Pre-trained Transformer         |
-| OS       | Operating System                           |
-| UQ       | University of Queensland                   |
-| Semester | The time of year of the school.            |
-| Course   | The subject or class enrolled.             |
-| Offering | The specific course and semester enrolled. |
+| Term     | Definition                                                                            |
+| -------- | ------------------------------------------------------------------------------------- |
+| AI       | Artificial Intelligence                                                               |
+| GPT      | Generative Pre-trained Transformer                                                    |
+| OS       | Operating System                                                                      |
+| UQ       | University of Queensland                                                              |
+| Course   | A collection of lectures, tutorials and assessments intended to teach students        |
+| Offering | A particular run of a course, in a particular year and semester                       |
+| Semester | A particular division of a year (e.g, semester 2 in an organisation with 3 semesters) |
 
 ## 1.3 Scope of application
 This document is intended to be useful for a wide range of individuals, including project team members, students, teachers, and other pertinent stakeholders.
@@ -50,6 +50,12 @@ This document solely focuses on category descriptions and listings. For detailed
 
 ## 2.4 Design principles
 Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we will incorporate each principle:
+
+# 3. Development and operation environment
+| Server    | Main Configuration | OS    | Purpose     | Middleware | Number |
+| --------- | ------------------ | ----- | ----------- | ---------- | ------ |
+| PC Server | 4C/16GB, 100GB     | Linux | Database    | Nothing    | 1      |
+| PC Server | 4C/16GB, 1000GB    | Linux | Application | Nothing    | 1      |
 
 1. Visibility of System: Our system will provide users with timely feedback to keep them informed. We will achieve this by highlighting the user's selected object and providing clear indicators during website loading.
 
