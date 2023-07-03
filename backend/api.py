@@ -405,24 +405,51 @@ class API:
             {SUCCESS: False, REASON: "coordinator_id not found as a user."}
 
         query = f"""
-        SELECT Offerings.id, Courses.name, Courses.desc
+        SELECT Offerings.id, Courses.name, Courses.desc, Lessons.blurb, Lessons.lesson_num, Lessons.date
         FROM Offerings
         JOIN Courses ON Courses.id = Offerings.id
-        WHERE Offerings.coordinator_id = {id}
+        LEFT OUTER JOIN Lessons on Offerings.id = Lessons.offering_id
+        WHERE Offerings.coordinator_id = 5
         """
         res = self.db.query(query)
 
-        data = [{"offering_id": id, "course_name": course_name, "desc": desc} for (id, course_name, desc) in res]
+        data = self.generate_course_data(res)
         return {SUCCESS: True, DATA: data}
 
-    # coordinatir =>
-    # {
-    #     data:
-    #         [
-    #             {
-    #                 offering_id
-    #                 course_name
-    #             }
-    #         ]
-    #
-    # }
+    def generate_course_data(self, query):
+        res = []
+        print(query)
+        for offering_id, course_name, course_desc, blurb, lesson_num, date in query:
+            found = False
+            for course_info in res:
+                print("appending")
+                if course_info["offering_id"] == offering_id:
+                    found = True
+                    course_info["lessons"].append({
+                        "lesson_num": lesson_num,
+                        "date": date,
+                        "blurb": blurb
+                    })
+            if not found:
+                print("making")
+                print(f"blurb = {blurb}, type = {type(blurb)}")
+
+                if blurb is None:
+                    lesson_data = []
+                else:
+                    lesson_data = [
+                        {
+                            "lesson_num": lesson_num,
+                            "date": date,
+                            "blurb": blurb
+                        }
+                    ]
+
+                res.append({
+                    "course_name": course_name,
+                    "offering_id": offering_id,
+                    "course_desc": course_desc,
+                    "lessons": lesson_data
+                })
+
+        return res
