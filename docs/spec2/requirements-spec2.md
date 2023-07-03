@@ -89,6 +89,10 @@ Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we
 # 4 Overall system architecture
 
 ## 4.1 Functional architecture
+<figcaption for="1"> <b>Figure 1</b>: Functional Architecture </figcaption>
+<figure id="1" style="display:flex;justify-content:center;">
+    <img alt="See docs/spec2/images/functionalarchitecture.draw.io.png" src="./images/functionalarchitecture.drawio.png" style="max-width:60%;">
+</figure>
 
 ## 4.2 Technical architecture
 
@@ -147,8 +151,8 @@ Operating system: Linux
 | alpha, '-'                           | Users cannot add spaces to their first and last name, prevents SQL injection | fname, sname | McNeilly-Yu               |
 
 ## 5.3 Database table structure description
-<figcaption for="1"> <b>Figure 5</b>: ER diagram of database </figcaption>
-<figure id="1" style="display:flex;justify-content:center;">
+<figcaption for="5"> <b>Figure 5</b>: ER diagram of database </figcaption>
+<figure id="5" style="display:flex;justify-content:center;">
     <img alt="See docs/spec2/images/relationaldb.draw.io.png" src="./images/relationaldb.drawio.png" style="max-width:60%;">
 </figure>
 
