@@ -1,13 +1,32 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 
 function EditLesson() {
   const [videoUrl, setVideoUrl] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [transcript, setTranscript] = useState("");
+  const { course_offering, lessonId } = useParams();
+  const offering = course_offering.split("_")[1];
   const videoRef = useRef(null);
 
-  function handleChange(e, i) {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/lessonData?offering_id=${offering}&lesson_num=${lessonId}`
+        );
+        const json = await res.json();
+        console.log(json);
+        setVideoUrl(json.data.video_url);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    fetchData();
+  }, [offering, lessonId]);
+
+  function handleChange(e) {
     const [type, index] = e.target.name.split(":");
     setQuestions([
       ...questions.slice(0, index),

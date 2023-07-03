@@ -24,7 +24,7 @@ function App() {
             <Route path="/:course_offering/:lessonId" element={<Course />} />
             <Route path="/:course_offering" element={<Lessons />} />
             <Route
-              path="/admin/:offeringId/:lessonId"
+              path="/admin/:course_offering/:lessonId"
               element={<EditLesson />}
             />
             <Route path="*" element={<h1>Page Not Found</h1>} />

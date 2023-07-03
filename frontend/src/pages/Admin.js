@@ -10,7 +10,8 @@ function Admin() {
   console.log(currentUser);
 
   const [selectedCourse, setSelectedCourse] = useState({
-    course_name: null,
+    name: null,
+    lessons: [],
   });
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,6 +77,7 @@ function Admin() {
               <p>No course selected</p>
             ) : (
               <LessonSelect
+                lessons={selectedCourse.lessons}
                 course={selectedCourse.course_name}
                 offering={selectedCourse.offering_id}
               />

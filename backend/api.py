@@ -409,7 +409,7 @@ class API:
         FROM Offerings
         JOIN Courses ON Courses.id = Offerings.id
         LEFT OUTER JOIN Lessons on Offerings.id = Lessons.offering_id
-        WHERE Offerings.coordinator_id = 5
+        WHERE Offerings.coordinator_id = {id}
         """
         res = self.db.query(query)
 
