@@ -32,20 +32,23 @@ The following section of the report provides an analysis of the risks associated
 
 
 ## Definition of Terms
-| Term | Definition                         |
-| ---- | ---------------------------------- |
-| AI   | Artificial Intelligence            |
-| GPT  | Generative Pre-trained Transformer |
+| Term     | Definition                                                                            |
+| -------- | ------------------------------------------------------------------------------------- |
+| AI       | Artificial Intelligence                                                               |
+| GPT      | Generative Pre-trained Transformer                                                    |
+| Course   | A collection of lectures, tutorials and assessments intended to teach students        |
+| Offering | A particular run of a course, in a particular year and semester                       |
+| Semester | A particular division of a year (e.g, semester 2 in an organisation with 3 semesters) |
 
 # Project Requirements
-| ID  | System Name        | Subsystem         | Function                      | Priority | Description |
+| ID  | System Name        | Subsystem         | Function Name                 | Priority | Description |
 | --- | ------------------ | ----------------- | ----------------------------- | -------- | ----------- |
 | 1   | Content Management | Add Content       | Add written content           | HIGH     |             |
 | 2   | Content Management | Add Content       | Add video content             | HIGH     |             |
-|     | AI/ML              | AI Transcription  | Generate video transcript     | HIGH     |             |
-|     | AI/ML              | AI Generation     | Generate questions from words | HIGH     |             |
-|     | Course Management  | Course Enrollment | Enrol in Course               | HIGH     |             |
-|     | Course Management  | Course Enrollment | Un-enroll in Course           | HIGH     |             |
-|     | Course Management  | Course Enrollment | View enrolled courses         | HIGH     |             |
-|     | Course Management  | Course Enrollment | View previous courses         | HIGH     |             |
+| 3   | AI/ML              | AI Transcription  | Generate video transcript     | HIGH     |             |
+| 4   | AI/ML              | AI Generation     | Generate questions from words | HIGH     |             |
+| 5   | Course Management  | Course Enrollment | Enrol in Course               | HIGH     |             |
+| 6   | Course Management  | Course Enrollment | Un-enroll in Course           | HIGH     |             |
+| 7   | Course Management  | Course Enrollment | View enrolled courses         | HIGH     |             |
+| 8   | Course Management  | Course Enrollment | View previous courses         | HIGH     |             |
 

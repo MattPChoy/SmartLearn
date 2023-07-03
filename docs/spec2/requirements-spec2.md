@@ -9,15 +9,15 @@ The overall objectives of the project include:
 3. Enabling teachers to provide varied teaching experiences for teachers.
 
 ## 1.2 Definition of terms
-| Term     | Definition                                 |
-| -------- | ------------------------------------------ |
-| AI       | Artificial Intelligence                    |
-| GPT      | Generative Pre-trained Transformer         |
-| OS       | Operating System                           |
-| UQ       | University of Queensland                   |
-| Semester | The time of year of the school.            |
-| Course   | The subject or class enrolled.             |
-| Offering | The specific course and semester enrolled. |
+| Term     | Definition                                                                            |
+| -------- | ------------------------------------------------------------------------------------- |
+| AI       | Artificial Intelligence                                                               |
+| GPT      | Generative Pre-trained Transformer                                                    |
+| OS       | Operating System                                                                      |
+| UQ       | University of Queensland                                                              |
+| Course   | A collection of lectures, tutorials and assessments intended to teach students        |
+| Offering | A particular run of a course, in a particular year and semester                       |
+| Semester | A particular division of a year (e.g, semester 2 in an organisation with 3 semesters) |
 
 ## 1.3 Scope of application
 This document is intended for project team members, students and teachers and other relevant stakeholders.
@@ -59,10 +59,10 @@ Our software will follow the Nielsen's Heuristic Design Heuristics. (REFERENCE: 
 10. Help and documentation: The application will be kept simple enough to avoid help and documentation, but this document and direct help from team members via workshops is available.
 
 # 3. Development and operation environment
-| Server     | Main Configuration | OS                  | Purpose     | Middleware | Number |
-| ---------- | ------------------ | ------------------- | ----------- | ---------- | ------ |
-| PC Server  | 4C/16GB, 100GB     | Linux               | Database    | Nothing    |    1   |
-| PC Server  | 4C/16GB, 1000GB    | Linux               | Application | Nothing    |    1   |
+| Server    | Main Configuration | OS    | Purpose     | Middleware | Number |
+| --------- | ------------------ | ----- | ----------- | ---------- | ------ |
+| PC Server | 4C/16GB, 100GB     | Linux | Database    | Nothing    | 1      |
+| PC Server | 4C/16GB, 1000GB    | Linux | Application | Nothing    | 1      |
 
 # 4. Overall system architecture
 
@@ -77,17 +77,17 @@ Our software will follow the Nielsen's Heuristic Design Heuristics. (REFERENCE: 
 ### 4.4.1 Student
 | AI education system (as student)                                                          |
 | ----------------------------------------------------------------------------------------- |
-| Interface function description  | Expected interface elements                             |
+| Interface function description                                                            | Expected interface elements                             |
 | ----------------------------------------------------------------------------------------- |
-| Access profile                  | Input: username (stored within session)                 |
-|                                 | ------------------------------------------------------- |
-|                                 | Output: basic user information related to username      |
-| Enrol courses                   |                                                         |
-| Drop courses                    |     
-| Receive feedback                |                                                         |
-| Get course information          |                                                         |
-| Watch videos
-| Answer question 
+| Access profile                                                                            | Input: username (stored within session)                 |
+|                                                                                           | ------------------------------------------------------- |
+|                                                                                           | Output: basic user information related to username      |
+| Enrol courses                                                                             |                                                         |
+| Drop courses                                                                              |
+| Receive feedback                                                                          |                                                         |
+| Get course information                                                                    |                                                         |
+| Watch videos                                                                              |
+| Answer question                                                                           |
 
 ### 4.4.2 Teacher
 

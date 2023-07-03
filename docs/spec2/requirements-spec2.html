@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,user-scalable=no">
+<meta name="description" content="undefined - microjam page">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js/styles/vs.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/goessner/mdmath/themes/publication/style.css">
+
+<title>undefined</title>
+</head>
+<body id="top">
+<header>
+
+
+
+
+
+
+</header>
+<main>
+<h1 dir="auto" id="1-introduction">1. Introduction</h1>
+<h2 dir="auto" id="11-project-objectives">1.1 Project Objectives</h2>
+<p dir="auto">Online teaching the most popular teaching method at present.</p>
+<p dir="auto">The overall objectives of the project include:</p>
+<ol dir="auto">
+<li dir="auto">Supporting students in understanding content more deeply through small assessment.</li>
+<li dir="auto">Allowing teachers to track their students' progress dynamically.</li>
+<li dir="auto">Enabling teachers to provide varied teaching experiences for teachers.</li>
+</ol>
+<h2 dir="auto" id="12-definition-of-terms">1.2 Definition of terms</h2>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>AI</td>
+<td>Artificial Intelligence</td>
+</tr>
+<tr dir="auto">
+<td>GPT</td>
+<td>Generative Pre-trained Transformer</td>
+</tr>
+<tr dir="auto">
+<td>OS</td>
+<td>Operating System</td>
+</tr>
+<tr dir="auto">
+<td>UQ</td>
+<td>University of Queensland</td>
+</tr>
+<tr dir="auto">
+<td>Course</td>
+<td>A collection of lectures, tutorials and assessments intended to teach students</td>
+</tr>
+<tr dir="auto">
+<td>Offering</td>
+<td>A particular run of a course, in a particular year and semester</td>
+</tr>
+<tr dir="auto">
+<td>Semester</td>
+<td>A particular division of a year (e.g, semester 2 in an organisation with 3 semesters)</td>
+</tr>
+</tbody>
+</table>
+<h2 dir="auto" id="13-scope-of-application">1.3 Scope of application</h2>
+<p dir="auto">This document is intended for project team members, students and teachers and other relevant stakeholders.</p>
+<hr dir="auto">
+<h1 dir="auto" id="2-overview-of-overall-design">2. Overview of overall design</h1>
+<h2 dir="auto" id="21-target-task">2.1 Target task</h2>
+<p dir="auto">The design goal of the SmartClass application is to largely simplify the process of lesson revision creation from teachers based on latest artificial intelligence technologies.</p>
+<p dir="auto">The main task of the AI education system is to convert pre-recorded videos to viable quiz questions to test students on their knowledge of the content. To accomplish this, the appropriate AI software must be considered. Other conditions including conditions of technology and operating environment must also be considered.</p>
+<p dir="auto">To complete this, the SmartClass application will need to (1) Convert the pre-recorded video to legible text. (2) Convert text to relevant and helpful questions and also retrieve answers using AI. (3) Answers to the questions are evaluated by AI if incorrect and relevant feedback is given. (4) If the student constantly answers the question incorrectly, the student will be directed to a prerequisite class or lesson to improve/re-learn the required knowledge.</p>
+<p dir="auto">The lessons can be designed using a &quot;knowledge network&quot; by connecting relevant prerequisite knowledge to each question.</p>
+<h2 dir="auto" id="22-design-strategy">2.2 Design strategy</h2>
+<p dir="auto">The system is based on React + Python Flask + SQLite3 to achieve front-end, back-end and data separation, to create a safe MVC (Model Viewer Controller) software architectural pattern.</p>
+<h2 dir="auto" id="23-conditions-and-restrictions">2.3 Conditions and restrictions</h2>
+<p dir="auto">This document is for category descriptions and listings only, see requirements-spec.</p>
+<ol dir="auto">
+<li dir="auto">Our application has a fair reliance on AI, and so the accuracy of answers relies on the OpenAI GPT-4 API.</li>
+<li dir="auto">Average response time: For teachers, the generation time for lessons may take a long time based on the length of the content provided. For students, the response time of answers should be less than 1 minute.</li>
+<li dir="auto">The application is currently specifically tailored for school-use and so other usage cases may be suboptimal. (Other use cases will be considered in the future.)</li>
+</ol>
+<h2 dir="auto" id="24-design-principles">2.4 Design principles</h2>
+<p dir="auto">Our software will follow the Nielsen's Heuristic Design Heuristics. (REFERENCE: <a href="https://www.nngroup.com/articles/ten-usability-heuristics/">https://www.nngroup.com/articles/ten-usability-heuristics/</a>)</p>
+<ol dir="auto">
+<li dir="auto">Visibility of System: Our system will keep users informed about what is going on, through appropriate feedback within a reasonable amount of time. We can do this by clearly highlighting the user's selected object and/or clearly indicating when the website is loading.</li>
+<li dir="auto">Match between system and real world: The design should speak the users' language and jargon, and follow real-world conventions. Our program will do this by recreating the school environment using school related jargon and also creating a &quot;knowledge network&quot; to assist in learning.</li>
+<li dir="auto">User control and freedom: Mistake preventative actions are available for users, i.e. confirmation pop-ups, and undo.</li>
+<li dir="auto">Consistency and standards: Our application will follow industry standards required by schools.</li>
+<li dir="auto">Error prevention: Our team will aim to reduce the possibilities of errors in the first place.</li>
+<li dir="auto">Recognition rather than recall: Relevant elements, actions and options will be visible on our website at all time, which reduces the need for user memory load.</li>
+<li dir="auto">Flexibility and efficiency of use: Shortcuts will be available to cater for both inexperienced and experienced users.</li>
+<li dir="auto">Aesthetic and minimalist design: Interfaces should only contain important information to prevent user distraction.</li>
+<li dir="auto">Help users recover from error: Errors messages should make sense for users and precisely indicate problem.</li>
+<li dir="auto">Help and documentation: The application will be kept simple enough to avoid help and documentation, but this document and direct help from team members via workshops is available.</li>
+</ol>
+<h1 dir="auto" id="3-development-and-operation-environment">3. Development and operation environment</h1>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Server</th>
+<th>Main Configuration</th>
+<th>OS</th>
+<th>Purpose</th>
+<th>Middleware</th>
+<th>Number</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>PC Server</td>
+<td>4C/16GB, 100GB</td>
+<td>Linux</td>
+<td>Database</td>
+<td>Nothing</td>
+<td>1</td>
+</tr>
+<tr dir="auto">
+<td>PC Server</td>
+<td>4C/16GB, 1000GB</td>
+<td>Linux</td>
+<td>Application</td>
+<td>Nothing</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<h1 dir="auto" id="4-overall-system-architecture">4. Overall system architecture</h1>
+<h2 dir="auto" id="41-functional-architecture">4.1 Functional architecture</h2>
+<h2 dir="auto" id="42-technical-architecture">4.2 Technical architecture</h2>
+<h2 dir="auto" id="43-deployable-architecture">4.3 Deployable architecture</h2>
+<h2 dir="auto" id="44-related-system-integration-relationship">4.4 Related system integration relationship</h2>
+<h3 dir="auto" id="441-student">4.4.1 Student</h3>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>AI education system (as student)</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>Interface function description</td>
+</tr>
+<tr dir="auto">
+<td>-----------------------------------------------------------------------------------------</td>
+</tr>
+<tr dir="auto">
+<td>Access profile</td>
+</tr>
+<tr dir="auto">
+<td></td>
+</tr>
+<tr dir="auto">
+<td></td>
+</tr>
+<tr dir="auto">
+<td>Enrol courses</td>
+</tr>
+<tr dir="auto">
+<td>Drop courses</td>
+</tr>
+<tr dir="auto">
+<td>Receive feedback</td>
+</tr>
+<tr dir="auto">
+<td>Get course information</td>
+</tr>
+<tr dir="auto">
+<td>Watch videos</td>
+</tr>
+<tr dir="auto">
+<td>Answer question</td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="442-teacher">4.4.2 Teacher</h3>
+<h1 dir="auto" id="5-database-design">5. Database design</h1>
+<h2 dir="auto" id="51-database-environment-description">5.1 Database environment description</h2>
+<ol dir="auto">
+<li dir="auto">
+<p dir="auto">Hardware environment
+CPU: 8C
+Memory: 16GB
+Hard disk: 1000G
+Network: 1000M network card</p>
+</li>
+<li dir="auto">
+<p dir="auto">Software environment
+Database: SQLite
+Operating system:</p>
+</li>
+</ol>
+<h2 dir="auto" id="52-database-naming-rules">5.2 Database naming rules</h2>
+<h2 dir="auto" id="53-database-table-structure-description">5.3 Database table structure description</h2>
+<h1 dir="auto" id="6-interface-design">6. Interface design</h1>
+<h2 dir="auto" id="61-external-interface">6.1 External interface</h2>
+<p dir="auto">Our external interface involves: (1) The teacher, who can upload videos, and edit transcripts and questions that may have generative mistakes from the AI and, (2) The students who can: for any lesson uploaded by teachers, be able to answer questions and receive feedback.</p>
+<h2 dir="auto" id="62-internal-interface">6.2 Internal interface</h2>
+<p dir="auto">The front-end application module of the attendance system interacts with the back-end service using REST APIs, using the internal interface access mode. This mode realizes the separation and decoupling of front and back office.</p>
+
+</main>
+</body>
+</html>
