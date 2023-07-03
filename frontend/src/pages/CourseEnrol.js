@@ -13,22 +13,16 @@ import DataTable from "../components/DataTable";
 
 function CourseEnrol() {
   const { currentUser } = useAuth();
-  // const courses = [];
-  const semesters = [1, 2, 3];
-  const year = 2023;
 
-  const [semester, setSem] = useState("");
-  const [course, setCourse] = useState("");
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
   const [courses, setCourses] = useState([]);
-  const [coursesDicts, setCourseDicts] = useState([]);
   const [enrolled, setEnrolled] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [offeringID, setOfferingID] = useState([]);
-  const [offeringSemester, setOfferingSemester] = useState([]);
-  const [allCourseSemesters, setAllCourseSemesters] = useState([0]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedSemester, setSelectedSemester] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -42,10 +36,7 @@ function CourseEnrol() {
   const showCourseConfirmation = () => setCourseConfirmationShow(true);
 
   /* handle form control change message*/
-  const handleChange = (event) => {
-    setOfferingSemester([event.target.value]);
-    console.log(offeringSemester[0]);
-  };
+  const handleChange = (event) => {};
 
   /** Invalid course pop up message*/
   function InvalidCourse() {
@@ -101,111 +92,75 @@ function CourseEnrol() {
     );
   }
 
-  function parseSemesters(data) {
-    const res = {};
-    for (let offering of data) {
-      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}`;
-      if (offering["course_name"] in res) {
-        res[offering["course_name"]].push(sem);
-      } else {
-        res[offering["course_name"]] = [sem];
-      }
-    }
-    setAllCourseSemesters(res);
-    console.log(res);
-    return res;
-  }
-
-  function getAvaliableSemesters(course) {
-    const semesters = allCourseSemesters;
-    setOfferingSemester(semesters[course]);
-  }
+  function getAvaliableSemesters(course) {}
 
   /** Submit button event and error handle*/
-  const handleSubmit = (e) => {
-    if (!courses.includes(course)) {
+  const handleSubmit = async () => {
+    if (
+      courses.filter((course) => course.course_name === selectedCourse)
+        .length === 0 ||
+      selectedSemester === ""
+    ) {
       showInvalidCourse();
-    } else if (offeringSemester.length === 0) {
-      showInvalidSem();
     } else {
-      showCourseConfirmation();
-      console.log(coursesDicts);
-      // enrol(1)
-      setEnrolled([
-        ...enrolled,
-        coursesDicts.find((dict) => {
-          return dict.course_name === course ;
-        }),
-      ]);
+      try {
+        fetch(`http://localhost:5000/api/enrol`, {
+          method: "POST",
+          body: JSON.stringify({
+            semester: selectedSemester,
+            course_name: selectedCourse,
+            year: selectedYear,
+            student_id: 3,
+          }),
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            if (res.success === true) {
+              console.log("enrollment successful");
+            } else {
+              console.log(res.reason)
+            }
+          });
+        console.log(selectedSemester);
+        console.log(selectedCourse);
+        console.log(selectedYear);
+
+      } catch (e) {
+        // console.log(e);
+      }
     }
   };
 
-  /** fetching course details */
-  function getAvailableCourses(student_id) {
-    fetch(
-      `http://localhost:5000/api/availableCourses?student_id=${student_id}`,
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success === true) {
-          setLoading(false);
-          parseSemesters(data.data);
-          setCourseDicts(data.data);
-          setCourses(
-            data.data.map((courseList) => {
-              if (!courses.includes(courseList.course_name)) {
-                return courseList.course_name;
-              }
-            })
-          );
-        } else {
-          console.log("Request failed");
-        }
-      });
-  }
-
-  /**enrol courses */
-  function enrol(student_id) {
-    fetch(`http://localhost:5000/api/enrol?student_id=${student_id}`, {
-      method: "POST",
-      body: JSON.stringify({
-        student_id: student_id,
-        offering_id: offeringID,
-      }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data.success);
-        console.log(data.reason);
-        if (data.success === true) {
-          setLoading(false);
-        }
-      });
-  }
-
-  /** Render th courses */
+  // Get data from database
   useEffect(() => {
-    getAvailableCourses(1);
+    async function fetchData() {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/availableCourses?student_id=${3}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        const resObj = await res.json();
+        if (resObj.success === true) {
+          // console.log(resObj.data);
+          setCourses(resObj.data);
+          setLoading(false);
+        }
+      } catch (e) {
+        // console.log(e);
+      }
+    }
+
+    fetchData();
   }, []);
 
-  function inputChange(_, newValue) {
-    getAvaliableSemesters(newValue);
-    console.log(offeringSemester);
-    setCourse(newValue);
-    console.log(newValue);
-    const test = coursesDicts.find((dict) => {
-      return dict.course_name === newValue;
-    });
-    setOfferingID(test.offering_id);
-  }
-
   /** Create page components */
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <div className="w-25">
       <h1>Course Enrol</h1>
       <InvalidCourse />
@@ -215,9 +170,9 @@ function CourseEnrol() {
         className="w-100"
         disablePortal
         id="combo-box-demo"
-        options={courses}
-        value={course}
-        onInputChange={inputChange}
+        options={courses.map((course) => course.course_name)}
+        value={selectedCourse}
+        onInputChange={(e, n) => setSelectedCourse(n)}
         sx={{ width: 300 }}
         renderInput={(params) => (
           <TextField {...params} label="Select Course" />
@@ -229,29 +184,39 @@ function CourseEnrol() {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={offeringSemester}
+          value={`${selectedSemester}:${selectedYear}`}
           label="Semester"
-          onChange={handleChange}
+          onChange={(e) => {
+            const [sem, year] = e.target.value.split(":");
+            setSelectedSemester(sem);
+            setSelectedYear(year);
+            // console.log(selectedSemester)
+          }}
         >
-          {offeringSemester.map((semester, index) => (
-            <MenuItem key={index} value={`${semester}`}>
-              {`${semester}`}
-            </MenuItem>
-          ))}
+          {courses
+            .filter((course) => course.course_name === selectedCourse)
+            .map((course) => {
+              const semester = {
+                semester: course.semester,
+                year: course.year,
+              };
+              return semester;
+            })
+            .map((sem, index) => (
+              <MenuItem key={index} value={`${sem.semester}:${sem.year}`}>
+                {`Semester ${sem.semester} ${sem.year}`}
+              </MenuItem>
+            ))}
         </Select>
-      </FormControl>
+      </FormControl>{" "}
       <br />
       <br />
-
-      <Button
-        className="btn btn-dark w-100"
-        onClick={async () => await handleSubmit()}
-      >
+      <Button className="btn btn-dark w-100" onClick={handleSubmit}>
         Sign away your life
       </Button>
       <br />
       <br />
-      {loading ? <Spinner /> : <DataTable data={enrolled} />}
+      {/* <DataTable data={enrolled} /> */}
     </div>
   );
 }
