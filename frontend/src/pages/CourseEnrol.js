@@ -22,11 +22,13 @@ function CourseEnrol() {
   const [courseShow, setCourseShow] = useState(false);
   const [semShow, setSemShow] = useState(false);
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
-  const [courses, setCourses] = useState([])
-  const [coursesDicts, setCourseDicts] = useState([])
-  const [enrolled, setEnrolled] = useState([])
+  const [courses, setCourses] = useState([]);
+  const [coursesDicts, setCourseDicts] = useState([]);
+  const [enrolled, setEnrolled] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [offeringID, setOfferingID] = useState([]) 
+  const [offeringID, setOfferingID] = useState([]);
+  const [offeringSemester, setOfferingSemester] = useState([]);
+  const [allCourseSemesters, setAllCourseSemesters] = useState([0]);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -41,7 +43,8 @@ function CourseEnrol() {
 
   /* handle form control change message*/
   const handleChange = (event) => {
-    setSem(event.target.value);
+    setOfferingSemester([event.target.value]);
+    console.log(offeringSemester[0]);
   };
 
   /** Invalid course pop up message*/
@@ -75,7 +78,7 @@ function CourseEnrol() {
           </Button>
         </Modal.Footer>
       </Modal>
-    ); 
+    );
   }
 
   /** Course confirmation pop up*/
@@ -98,37 +101,71 @@ function CourseEnrol() {
     );
   }
 
-  /* Submit button event and error handle*/
+  function parseSemesters(data) {
+    const res = {};
+    for (let offering of data) {
+      const sem = `Semester: ${offering["semester"]}; ${offering["year"]}`;
+      if (offering["course_name"] in res) {
+        res[offering["course_name"]].push(sem);
+      } else {
+        res[offering["course_name"]] = [sem];
+      }
+    }
+    setAllCourseSemesters(res);
+    console.log(res);
+    return res;
+  }
+
+  function getAvaliableSemesters(course) {
+    const semesters = allCourseSemesters;
+    setOfferingSemester(semesters[course]);
+  }
+
+  /** Submit button event and error handle*/
   const handleSubmit = (e) => {
     if (!courses.includes(course)) {
       showInvalidCourse();
-    } else if (semester.length === 0) {
+    } else if (offeringSemester.length === 0) {
       showInvalidSem();
     } else {
-      showCourseConfirmation()
-      enrol(1)
-      setEnrolled([...enrolled, coursesDicts.find(dict=>{
-        return dict.course_name === course
-      })])
+      showCourseConfirmation();
+      console.log(coursesDicts);
+      // enrol(1)
+      setEnrolled([
+        ...enrolled,
+        coursesDicts.find((dict) => {
+          return dict.course_name === course ;
+        }),
+      ]);
     }
-  } 
- 
+  };
+
   /** fetching course details */
   function getAvailableCourses(student_id) {
-    fetch(`http://localhost:5000/api/availableCourses?student_id=${student_id}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json()).then((data) => {
-      if (data.success === true) {
-        setLoading(false)
-        setCourseDicts(data.data)       
-        setCourses(data.data.map((courseList)=>{          
-          return(courseList.course_name)       
-        }))
-      } else {
-        console.log("Request failed")
+    fetch(
+      `http://localhost:5000/api/availableCourses?student_id=${student_id}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       }
-    })
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === true) {
+          setLoading(false);
+          parseSemesters(data.data);
+          setCourseDicts(data.data);
+          setCourses(
+            data.data.map((courseList) => {
+              if (!courses.includes(courseList.course_name)) {
+                return courseList.course_name;
+              }
+            })
+          );
+        } else {
+          console.log("Request failed");
+        }
+      });
   }
 
   /**enrol courses */
@@ -137,36 +174,38 @@ function CourseEnrol() {
       method: "POST",
       body: JSON.stringify({
         student_id: student_id,
-        offering_id: offeringID
+        offering_id: offeringID,
       }),
       headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json()).then((data) => {
-      console.log(data.success)
-      console.log(data.reason)
-      if (data.success === true) {
-        setLoading(false)
-        console.log(data.data)
-      }
     })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.success);
+        console.log(data.reason);
+        if (data.success === true) {
+          setLoading(false);
+        }
+      });
   }
 
-  /**Render th courses */
+  /** Render th courses */
   useEffect(() => {
-    getAvailableCourses(1)
-  }, [])
+    getAvailableCourses(1);
+  }, []);
 
-  function inputChange(_, newValue) { 
-    setCourse(newValue)
-    console.log(newValue)
-    const test = coursesDicts.find(dict=>{
-      return dict.course_name === newValue
-    })
-    setOfferingID(test.offering_id)
-    console.log(offeringID) 
+  function inputChange(_, newValue) {
+    getAvaliableSemesters(newValue);
+    console.log(offeringSemester);
+    setCourse(newValue);
+    console.log(newValue);
+    const test = coursesDicts.find((dict) => {
+      return dict.course_name === newValue;
+    });
+    setOfferingID(test.offering_id);
   }
 
-  /**Create page components */
-  return (    
+  /** Create page components */
+  return (
     <div className="w-25">
       <h1>Course Enrol</h1>
       <InvalidCourse />
@@ -190,13 +229,13 @@ function CourseEnrol() {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={semester}
+          value={offeringSemester}
           label="Semester"
           onChange={handleChange}
         >
-          {semesters.map((semester, index) => (
-            <MenuItem key={index} value={`${year}; ${semester}`}>
-              {`Semester ${semester}; ${year}`}
+          {offeringSemester.map((semester, index) => (
+            <MenuItem key={index} value={`${semester}`}>
+              {`${semester}`}
             </MenuItem>
           ))}
         </Select>
@@ -209,12 +248,10 @@ function CourseEnrol() {
         onClick={async () => await handleSubmit()}
       >
         Sign away your life
-      </Button> 
+      </Button>
       <br />
       <br />
-      {loading ? (
-        <Spinner />
-      ) : (<DataTable  data={enrolled}/>)}
+      {loading ? <Spinner /> : <DataTable data={enrolled} />}
     </div>
   );
 }

@@ -1,36 +1,9 @@
 import { useState, useRef } from "react";
 import { Form, Button } from "react-bootstrap";
 
-const temp_questions = [
-  {
-    question: "The sky is blue",
-    answer: false,
-  },
-  {
-    question: "what is 2 + 2?",
-    answer: 4,
-  },
-  {
-    question: "The sky is blue",
-    answer: false,
-  },
-  {
-    question: "what is 2 + 2?",
-    answer: 4,
-  },
-  {
-    question: "The sky is blue",
-    answer: false,
-  },
-  {
-    question: "what is 2 + 2?",
-    answer: 4,
-  },
-];
-
 function EditLesson() {
   const [videoUrl, setVideoUrl] = useState(null);
-  const [questions, setQuestions] = useState(temp_questions);
+  const [questions, setQuestions] = useState([]);
   const [transcript, setTranscript] = useState("");
   const videoRef = useRef(null);
 
@@ -41,6 +14,12 @@ function EditLesson() {
       { ...questions, [type]: e.target.value },
       ...questions.slice(index + 1),
     ]);
+    textAreaAdjust(e.target);
+  }
+
+  function textAreaAdjust(o) {
+    o.style.height = "1px";
+    o.style.height = 25 + o.scrollHeight + "px";
   }
 
   async function handleUpload(e) {
@@ -54,8 +33,11 @@ function EditLesson() {
         body: data,
       });
       const json = await res.json();
-      console.log("JSON, ", json.data.text);
-      setTranscript(json.data.text);
+      console.log("JSON, ", json.data);
+      const questions = JSON.parse(json.data.questions);
+      console.log("questions: ", questions);
+      setTranscript(json.data.transcript);
+      setQuestions(questions);
       console.log(res);
     } catch (e) {
       console.log(e);
@@ -106,9 +88,10 @@ function EditLesson() {
                   <div className="question-container" key={index}>
                     <Form.Label>Question</Form.Label>
                     <Form.Control
+                      as="textarea"
+                      style={{ overflow: "hidden" }}
                       name={`question:${index}`}
                       value={question.question}
-                      type="text"
                       onChange={handleChange}
                     />
                     <Form.Label>Answer</Form.Label>
@@ -130,7 +113,7 @@ function EditLesson() {
               <Form.Label>Transcript</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={transcript.length / 100}
                 value={transcript}
                 onChange={(e) => setTranscript(e.target.value)}
               />

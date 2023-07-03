@@ -1,7 +1,7 @@
 import { ListGroup } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function LessonSelect({ lessons, course }) {
+function LessonSelect({ lessons, course, offering }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -9,15 +9,15 @@ function LessonSelect({ lessons, course }) {
     <ListGroup>
       {lessons.map((lesson) => (
         <ListGroup.Item
-          key={lesson.id}
+          key={lesson.lesson_num}
           action
           onClick={() =>
             location.pathname === "/admin"
-              ? navigate(`${course}/${lesson.id}`)
-              : navigate(`${lesson.id}`)
+              ? navigate(`${course}_${offering}/${lesson.lesson_num}`)
+              : navigate(`${lesson.lesson_num}`)
           }
         >
-          {lesson.name}
+          {lesson.blurb}
         </ListGroup.Item>
       ))}
     </ListGroup>

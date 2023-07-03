@@ -1,7 +1,7 @@
 from database import Database
 import os
 from flask import request
-from vidtotext import transcribe
+from ai_functions import transcribe, generate_questions
 import json
 
 
@@ -44,15 +44,17 @@ class API:
         if _path[0] == "currentlyEnrolled" and request_method == "GET":
             return self.get_currently_enrolled(request_body)
         if _path[0] == "enrol" and request_method == "POST":
-            return self.enrol(request_body)
+            return self.handle_enrol(request_body)
         if _path[0] == "unenrol" and request_method == "POST":
             return self.unenrol(request_body)
         if _path[0] == "profile" and request_method == "GET":
             return self.get_profile(request_body)
-        if _path[0] == "getLesson" and request_method == "GET":
+        if _path[0] == "getLessons" and request_method == "GET":
             return self.get_lesson_info(request_body)
         if _path[0] == "lessonData" and request_method == "GET":
             return self.get_lesson_data(request_body)
+        if _path[0] == "coordinatorCourses" and request_method == "GET":
+            return self.coordinator_courses(request_body)
 
         # 2 End points, 1) of_id -> lessonNum, date, blurb
         # of_id -> lesson_name, lesson_id, lesson_date
@@ -101,17 +103,39 @@ class API:
             f'''INSERT INTO Users VALUES({id}, '{fname}', '{sname}', '{password}', '{email}')''', save=True)
         return {SUCCESS: True}
 
-    def enrol(self, request_body):
-        # Checks if id and password fields are in request
-        if not ("student_id" in request_body and "offering_id" in request_body):
-            return {SUCCESS: False, REASON: "Missing student or offering id"}
+    def handle_enrol(self, request_body):
+        fields = ["student_id", "course_name", "year", "semester"]
+        for field in fields:
+            if field not in request_body:
+                return {SUCCESS: False, REASON: "Missing {field} field in request."}
 
         try:
             student_id = int(request_body["student_id"])
-            offering_id = int(request_body["offering_id"])
+            year = int(request_body["year"])
+            semester =  int(request_body["semester"])
         except ValueError:
             return {SUCCESS: False, REASON: "Student or Org id not of integer form."}
 
+
+        query = f"""
+        SELECT Offerings.id
+        FROM Offerings
+        JOIN Courses ON Offerings.course_id = Courses.id
+        WHERE Offerings.year = {year} AND Offerings.semester = {semester} AND Courses.name = "{request_body.get("course_name")}"
+        """
+        print(query)
+        res = self.db.query(query)
+        print(f"res = {res}")
+
+        if (not res) or (len(res) != 1) or res == [()]:
+            return {SUCCESS: False, REASON: "Year and semester does not uniquely make an offering id."}
+
+        [(offering_id,)] = res
+        print(f"{student_id}, {offering_id}.")
+        return self.enrol(student_id, offering_id)
+
+
+    def enrol(self, student_id, offering_id):
         if not self.student_in_db(student_id):
             return {SUCCESS: False, REASON: "Student id not found in database."}
 
@@ -138,7 +162,7 @@ class API:
     def is_enrolled(self, student_id, offering_id):
         res = self.db.query(
             f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
-        return res and res[0][0]
+        return res and res[0]
 
     def unenrol(self, request_body):
         # Checks if id and password fields are in request
@@ -209,7 +233,7 @@ class API:
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Organisations ON Organisations.id=Courses.org_id
-        WHERE year=2023 AND semester=2 AND Offerings.id NOT IN (
+        WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
 	        FROM Enrolments
 	        WHERE {id} == Enrolments.student_id
@@ -217,6 +241,18 @@ class API:
         """
         res = self.db.query(query)
         print(res)
+
+        """
+        [
+            {
+                course_name: Arya,
+
+            },
+            {
+
+            }
+        ]
+        """
 
         col = ["course_name", "description", "year", "semester", "offering_id",
                "coordinator_firstname", "coordinator_lastname", "organisation_name"]
@@ -233,9 +269,16 @@ class API:
         with open(os.path.join(UPLOAD_DIRECTORY, file_name), "wb") as fp:
             fp.write(request_files["video"].read())
 
-        transcript = transcribe(file_name)
+        transcript = transcribe(os.path.join(UPLOAD_DIRECTORY, file_name))
 
-        return {SUCCESS: True, "data": transcript}
+        # save transcript to file
+        with open(os.path.join(UPLOAD_DIRECTORY, file_name + ".txt"), "w") as fp:
+            fp.write(transcript)
+
+        # generate questions
+        questions = generate_questions(transcript)
+
+        return {SUCCESS: True, "data": {"questions": questions, "transcript": transcript}}
         # with open(os.path.join(UPLOAD_DIRECTORY, path), "wb") as fp:
         #     fp.write(request_files["file"].read())
         # return {SUCCESS: True}
@@ -259,15 +302,16 @@ class API:
             SELECT
                 (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_fname,
 	            (SELECT Users.sname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as Coordinator_sname,
-                Courses.name, Courses.desc FROM Enrolments
+                Courses.name, Courses.desc, Offerings.id FROM Enrolments
             JOIN Offerings ON Enrolments.offering_id=Offerings.id
             JOIN Courses ON Offerings.course_id=Courses.id
             WHERE Enrolments.student_id={id} AND year={CURR_YEAR} AND semester={CURR_SEMESTER}""")
 
         cols = ["coordinator_firstname", "coordinator_lastname",
-                "course_name", "course_desc"]
+                "course_name", "course_desc", "offering_id"]
         _res = list()
         for row in res:
+            print(f"cols = {cols}, row = {row}, adding = {dict(zip(cols, row))}")
             _res.append(dict(zip(cols, row)))
         return {SUCCESS: True, DATA: _res}
 
@@ -304,42 +348,81 @@ class API:
         return {SUCCESS: True, DATA: data}
 
     def get_lesson_data(self, request_body):
-        for field in  ["offering_id", "lesson_num", "fp"]:
+        """
+        http://localhost:5000/api/lessonData?offering_id=1&lesson_num=1
+
+        {
+            SUCCESS = bool
+            output = {
+                "date": date,
+                "video_fp": fp,
+                "blurb": blurb,
+                "questions": questions
+        }
+        """
+        for field in  ["offering_id", "lesson_num"]:
             if field not in request_body:
                 return {SUCCESS: False, REASON: f"{field} field not in request"}
 
         try:
-            offering_id = request_body.get('offering_id')
-            lesson_id = request_body.get('lesson_num')
+            offering_id = int(request_body.get('offering_id'))
+            lesson_id = int(request_body.get('lesson_num'))
         except ValueError:
             return {SUCCESS: False, REASON: "Offering or lesson ID not of integer form."}
 
-        # Gets JSON
-        fp = request_body.get('fp')
-        path = f"{os.path.dirname(__file__)}/static/{fp[2:-1]}/questions.json"
-        print(path)
-        questions = json.load(open(path))
-        print(questions)
+        # Gets JSONbackend/static/COMP4702-2023-2/lesson2/questions.json
 
         query = f"""
-        SELECT Lessons.date, Lessons.fp
+        SELECT Lessons.fp, Lessons.date, Lessons.blurb
         FROM Lessons
         WHERE {offering_id} = offering_id AND {lesson_id} = lesson_num
         """
-        print(query)
         res = self.db.query(query)
         # Query = [(lesson_data, lesson_fp)]
-        [(lesson_date, lesson_fp)] = res
+        [(fp, date, blurb)] = res
+        path = f"{os.path.dirname(__file__)}/static/{fp[2:-1]}/questions.json"
+        questions = json.load(open(path))
+
         output = {
-            "date": lesson_date,
-            "video_fp": lesson_fp,
+            "date": date,
+            "video_fp": fp,
+            "blurb": blurb,
             "questions": questions
         }
-
         return {SUCCESS: True, DATA: output}
 
+    def coordinator_courses(self, request_body):
+        if "coordinator_id" not in request_body:
+            return {SUCCESS: False, REASON: "coordinator_id field not in request"}
+
+        try:
+            id = int(request_body.get('coordinator_id'))
+        except ValueError:
+            {SUCCESS: False, REASON: "coordinator_id not of integer form."}
 
 
+        if not self.student_in_db(id):
+            {SUCCESS: False, REASON: "coordinator_id not found as a user."}
 
-    # lesson_name, lesson_id, lesson_date
-    # offering_id, lesson_id ->  video_fp, transcript, questions_json
+        query = f"""
+        SELECT Offerings.id, Courses.name, Courses.desc
+        FROM Offerings
+        JOIN Courses ON Courses.id = Offerings.id
+        WHERE Offerings.coordinator_id = {id}
+        """
+        res = self.db.query(query)
+
+        data = [{"offering_id": id, "course_name": course_name, "desc": desc} for (id, course_name, desc) in res]
+        return {SUCCESS: True, DATA: data}
+
+    # coordinatir =>
+    # {
+    #     data:
+    #         [
+    #             {
+    #                 offering_id
+    #                 course_name
+    #             }
+    #         ]
+    #
+    # }
