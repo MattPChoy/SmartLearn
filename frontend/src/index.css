@@ -84,7 +84,6 @@ code {
 .video-container {
   flex: 7;
   height: 70vh;
-  border: 1px solid black;
   border-radius: 5px;
   display: flex;
   flex-direction: column;

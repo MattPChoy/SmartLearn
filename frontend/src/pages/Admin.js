@@ -1,78 +1,70 @@
-import React, { useState } from "react";
-import { ListGroup } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { ListGroup, Spinner } from "react-bootstrap";
 import LessonSelect from "../components/LessonSelect";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-
-const temp_courses = [
-  {
-    code: "COMP3506",
-    name: "Data Structures and Algorithms",
-    coordinator: "John",
-    lessons: [
-      { name: "Lecture 1", id: 1 },
-      { name: "Lecture 2", id: 2 },
-      { name: "Lecture 1", id: 3 },
-      { name: "Lecture 2", id: 4 },
-      { name: "Lecture 1", id: 5 },
-      { name: "Lecture 2", id: 6 },
-      { name: "Lecture 1", id: 7 },
-      { name: "Lecture 2", id: 8 },
-      { name: "Lecture 1", id: 9 },
-      { name: "Lecture 2", id: 10 },
-      { name: "Lecture 1", id: 11 },
-      { name: "Lecture 2", id: 12 },
-      { name: "Lecture 1", id: 13 },
-      { name: "Lecture 2", id: 14 },
-    ],
-  },
-  {
-    code: "COMP3702",
-    name: "Artificial Intelligence",
-    coordinator: "Steve",
-    lessons: [
-      { name: "asdf 1", id: 1 },
-      { name: "Lesadfre 2", id: 2 },
-    ],
-  },
-];
+import { useAuth } from "../helper/AuthContext";
 
 function Admin() {
+  const { currentUser } = useAuth();
+  console.log(currentUser);
+
   const [selectedCourse, setSelectedCourse] = useState({
-    code: null,
-    lessons: [],
+    course_name: null,
   });
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function getCourses() {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/coordinatorCourses?coordinator_id=${currentUser}`
+        );
+        const data = await response.json();
+        console.log(data);
+        setCourses(data.data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    getCourses();
+  }, [currentUser]);
 
   function CourseSelect({ courses }) {
     return (
       <ListGroup>
         {courses.map((course) => (
           <ListGroup.Item
-            key={course.code}
+            key={course.course_name}
             action
             variant="light"
             className={`item ${
-              course.code === selectedCourse.code ? "active" : ""
+              course.course_name === selectedCourse.course_name ? "active" : ""
             }`}
             onClick={() => setSelectedCourse(course)}
           >
-            {course.name}
+            {course.course_name}
           </ListGroup.Item>
         ))}
       </ListGroup>
     );
   }
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <>
       <h1>Admin</h1>
       <div className="Admin">
         <div className="course-select">
-          <CourseSelect courses={temp_courses} />
+          <CourseSelect courses={courses} />
         </div>
 
         <div className="lesson-select-container">
-          {selectedCourse.code !== null && (
+          {selectedCourse.course_name !== null && (
             <div className="AddButton">
               <Fab variant="extended" color="primary" aria-label="add">
                 <AddIcon />
@@ -80,12 +72,12 @@ function Admin() {
             </div>
           )}
           <div className="lesson-select">
-            {selectedCourse.code === null ? (
+            {selectedCourse.course_name === null ? (
               <p>No course selected</p>
             ) : (
               <LessonSelect
-                lessons={selectedCourse.lessons}
-                course={selectedCourse.code}
+                course={selectedCourse.course_name}
+                offering={selectedCourse.offering_id}
               />
             )}
           </div>
