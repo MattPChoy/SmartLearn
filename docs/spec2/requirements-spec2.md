@@ -95,6 +95,10 @@ Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we
 </figure>
 
 ## 4.2 Technical architecture
+<figcaption for="2"> <b>Figure 2</b>: Technical Architecture </figcaption>
+<figure id="2" style="display:flex;justify-content:center;">
+    <img alt="See docs/spec2/images/technicalarchitecture.draw.io.png" src="./images/technicalarchitecture.drawio.png" style="max-width:60%;">
+</figure>
 
 ## 4.3 Deployable architecture
 
