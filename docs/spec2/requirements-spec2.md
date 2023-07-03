@@ -53,12 +53,6 @@ This document solely focuses on category descriptions and listings. For detailed
 ## 2.4 Design principles
 Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we will incorporate each principle:
 
-# 3. Development and operation environment
-| Server    | Main Configuration | OS    | Purpose     | Middleware | Number |
-| --------- | ------------------ | ----- | ----------- | ---------- | ------ |
-| PC Server | 4C/16GB, 100GB     | Linux | Database    | Nothing    | 1      |
-| PC Server | 4C/16GB, 1000GB    | Linux | Application | Nothing    | 1      |
-
 1. Visibility of System: Our system will provide users with timely feedback to keep them informed. We will achieve this by highlighting the user's selected object and providing clear indicators during website loading.
 
 2. Match between system and real world: Our design will use familiar language and jargon that resonates with users. By incorporating school-related terms and creating a "knowledge network," we will recreate the school environment and facilitate learning.
@@ -78,8 +72,7 @@ Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we
 9. Help users recover from errors: Our error messages will be user-friendly, clearly indicating the problem and providing meaningful guidance for recovery.
 
 10. Help and documentation: While we aim to keep our application intuitive enough to minimize reliance on help and documentation, we will provide this document as a resource. Additionally, users can access direct help from our team through workshops and other channels.
-
-
+    
 # 3 Development and operation environment
 | Server    | Main Configuration | OS    | Purpose     | Middleware | Number |
 | --------- | ------------------ | ----- | ----------- | ---------- | ------ |
