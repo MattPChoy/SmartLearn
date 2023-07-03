@@ -1,3 +1,5 @@
+# SmartClass: Requirement Specification 2
+
 # 1 Introduction
 
 ## 1.1 Project Objectives
@@ -93,8 +95,7 @@ Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we
 ## 4.3 Deployable architecture
 
 ## 4.4 Related system integration relationship
-### 4.4.1 Student
-AI education system (as student)                                                          
+### 4.4.1 Student                                                   
 | Interface function description | Expected interface element (input)                 |
 | ------------------------------ | -------------------------------------------------- |
 | Access profile                 | Input: username (stored within session)            |
@@ -136,7 +137,20 @@ Network: 1000M network card
 Database: SQLite
 Operating system: Linux
 
-## 5.2 Database table structure description
+## 5.2 Database naming rules
+
+| Structure                            | Explanation                                                                  | Field        | Example                   |
+| ------------------------------------ | ---------------------------------------------------------------------------- | ------------ | ------------------------- |
+| Alpha prefix, numeric suffix         | Typical structure for courseID                                               | courseID     | CSSE3880, CS50            |
+| date: YYYY-MM-DD                     | SQLite limitation, no date type                                              | date         | 2023-07-03                |
+| ./{courseID}-YYYY-{semester}/lessonN | location where files will be stored                                          | fp           | ./COMP4500-2023-2/lesson4 |
+| alpha, '-'                           | Users cannot add spaces to their first and last name, prevents SQL injection | fname, sname | McNeilly-Yu               |
+
+## 5.3 Database table structure description
+<figcaption for="1"> <b>Figure 5</b>: ER diagram of database </figcaption>
+<figure id="1" style="display:flex;justify-content:center;">
+    <img alt="See docs/spec2/images/relationaldb.draw.io.png" src="./images/relationaldb.drawio.png" style="max-width:60%;">
+</figure>
 
 # 6 Interface design
 
