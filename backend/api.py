@@ -61,7 +61,7 @@ class API:
             return {SUCCESS: False, REASON: "Invalid id type when converting to integer datatype."}
         password = request_body["password"]
 
-        query = f"SELECT password FROM Users WHERE id == {id}"
+        query = f"SELECT password FROM Users WHERE id = {id}"
         res = self.db.query(query)
 
         # expected res = [(password)]
@@ -135,17 +135,18 @@ class API:
 
     def student_in_db(self, student_id):
         res = self.db.query(
-            f"""SELECT id FROM Users WHERE {student_id} == id""")
+            f"""SELECT id FROM Users WHERE {student_id} = id""")
         return res and res[0]
 
     def offering_in_db(self, offering_id):
         res = self.db.query(
-            f"""SELECT id FROM Offerings WHERE {offering_id} == id""")
+            f"""SELECT id FROM Offerings WHERE {offering_id} = id""")
         return res and res[0]
 
     def is_enrolled(self, student_id, offering_id):
         res = self.db.query(
-            f"""SELECT * FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id""")
+            f"""SELECT * FROM Enrolments WHERE {student_id} = student_id AND {offering_id} = offering_id""")
+        print(res)
         return res and res[0]
 
     def unenrol(self, request_body):
@@ -168,8 +169,8 @@ class API:
         if not self.is_enrolled(student_id, offering_id):
             return {SUCCESS: False, REASON: "Student is not enrolled"}
 
-        self.db.query(
-            f'''DELETE FROM Enrolments WHERE {student_id} == student_id AND {offering_id} == offering_id''')
+        self.db.add(
+            f'''DELETE FROM Enrolments WHERE {student_id} = student_id AND {offering_id} = offering_id''')
         return {SUCCESS: True}
 
     def get_courses(self, request_body):
@@ -209,6 +210,8 @@ class API:
         except ValueError:
             return {SUCCESS: False, REASON: "student_id not of integer form."}
 
+        print(id)
+
         query = f"""
         SELECT Courses.name, Courses.desc, Offerings.year, Offerings.semester, Offerings.id,
         (SELECT Users.fname FROM Users WHERE Users.id=Offerings.coordinator_id AND Users.role>=50) as coordinator_firstname,
@@ -217,11 +220,10 @@ class API:
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Organisations ON Organisations.id=Courses.org_id
-		OUTER LEFT JOIN Enrolments ON Enrolments.offering_id = Offerings.id
         WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
 	        FROM Enrolments
-	        WHERE {id} == Enrolments.student_id
+	        WHERE {id} = Enrolments.student_id
 			)
         """
         res = self.db.query(query)
@@ -232,6 +234,7 @@ class API:
         _res = list()
         for row in res:
             _res.append(dict(zip(col, row)))
+        print(_res)
         return {SUCCESS: True, DATA: _res}
 
     def upload_video(self, request_files):
