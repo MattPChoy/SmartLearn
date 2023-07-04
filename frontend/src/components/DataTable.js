@@ -1,5 +1,6 @@
-import { toUnitless } from "@mui/material/styles/cssUtils";
+// import { toUnitless } from "@mui/material/styles/cssUtils";
 import React from "react";
+import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 
 function DataTable({ data }) {
@@ -24,6 +25,9 @@ function DataTable({ data }) {
           <td>{courseList.description}</td>
           <td>{`${courseList.coordinator_firstname} ${courseList.coordinator_lastname}`}</td>
           <td>{`Semester ${courseList.semester}-${courseList.year}`}</td>
+          <td>
+            <Button className="btn btn-primary">Unenrol</Button>
+          </td>
         </tr>
       ))}
     </Table>
