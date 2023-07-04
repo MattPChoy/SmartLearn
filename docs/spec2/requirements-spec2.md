@@ -20,7 +20,7 @@ Streamlining the development of online learning tools, thereby freeing up teache
 | UQ       | University of Queensland                                                              |
 | Course   | A collection of lectures, tutorials and assessments intended to teach students        |
 | Offering | A particular run of a course, in a particular year and semester                       |
-| Semester | A particular division of a year (e.g, semester 2 in an organisation with 3 semesters) |
+| Semester | A particular division of a year (e.g, semester 2 in an organization with 3 semesters) |
 
 ## 1.3 Scope of application
 This document is intended to be useful for a wide range of individuals, including project team members, students, teachers, and other pertinent stakeholders.
@@ -84,13 +84,13 @@ Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we
 ## 4.1 Functional architecture
 <figcaption for="1"> <b>Figure 1</b>: Functional Architecture </figcaption>
 <figure id="1" style="display:flex;justify-content:center;">
-    <img alt="See docs/spec2/images/functionalarchitecture.draw.io.png" src="./images/functionalarchitecture.drawio.png" style="max-width:60%;">
+    <img alt="See docs/spec2/images/functionalarchitecture.draw.io.png" src="./images/functionalarchitecture.drawio.png" style="max-width:70%;">
 </figure>
 
 ## 4.2 Technical architecture
 <figcaption for="2"> <b>Figure 2</b>: Technical Architecture </figcaption>
 <figure id="2" style="display:flex;justify-content:center;">
-    <img alt="See docs/spec2/images/technicalarchitecture.draw.io.png" src="./images/technicalarchitecture.drawio.png" style="max-width:60%;">
+    <img alt="See docs/spec2/images/technicalarchitecture.draw.io.png" src="./images/technicalarchitecture.drawio.png" style="max-width:70%;">
 </figure>
 
 ## 4.3 Deployable architecture
@@ -138,6 +138,10 @@ Network: 1000M network card
 Database: SQLite
 Operating system: Linux
 
+3. Software environment
+Service: AWS Cloud Services (Master-slave replication) (synchronous update)
+Database: MongoDB 
+
 ## 5.2 Database naming rules
 
 | Structure                            | Explanation                                                                  | Field        | Example                   |
@@ -150,7 +154,7 @@ Operating system: Linux
 ## 5.3 Database table structure description
 <figcaption for="5"> <b>Figure 5</b>: ER diagram of database </figcaption>
 <figure id="5" style="display:flex;justify-content:center;">
-    <img alt="See docs/spec2/images/relationaldb.draw.io.png" src="./images/relationaldb.drawio.png" style="max-width:60%;">
+    <img alt="See docs/spec2/images/relationaldb.draw.io.png" src="./images/relationaldb.drawio.png" style="max-width:70%;">
 </figure>
 
 # 6 Interface design

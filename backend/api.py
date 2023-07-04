@@ -16,10 +16,25 @@ QUESTIONS_FILE = "./questions.json"
 
 REGISTER_FIELDS = ["id", "firstname", "surname", "password", "email"]
 
+POST = "POST"
+GET = "GET"
 
 class API:
     def __init__(self, db: Database) -> None:
         self.db = db
+        self.endpoints = {
+            ("auth", POST): self.handle_login_request,
+            ("courses", GET): self.get_courses,
+            ("register", POST): self.register,
+            ("availableCourses", GET): self.get_available_courses,
+            ("currentlyEnrolled", GET): self.get_currently_enrolled,
+            ("enrol", POST): self.enrol,
+            ("unenrol", POST): self.unenrol,
+            ("profile", GET): self.get_profile,
+            ("getLessons", GET): self.get_lesson_info,
+            ("lessonData", GET): self.get_lesson_data,
+            ("coordinatorCourses", GET): self.coordinator_courses,
+        }
 
     def parse_response(self, request_method, request_body, path) -> str:
         """
@@ -29,39 +44,11 @@ class API:
         """
         _path = path.split("/")
 
-        # json {success: bool, reason: str}
-        # path = [auth, ]
-        print(_path)
-        if _path[0] == "auth" and request_method == "POST":
-            res = self.handle_login_request(request_body)
-            return res
-        if _path[0] == "courses" and request_method == "GET":
-            return self.get_courses(request_body)
-        if _path[0] == "register" and request_method == "POST":
-            return self.register(request_body)
-        if _path[0] == "availableCourses" and request_method == "GET":
-            return self.get_available_courses(request_body)
-        if _path[0] == "currentlyEnrolled" and request_method == "GET":
-            return self.get_currently_enrolled(request_body)
-        if _path[0] == "enrol" and request_method == "POST":
-            return self.handle_enrol(request_body)
-        if _path[0] == "unenrol" and request_method == "POST":
-            return self.unenrol(request_body)
-        if _path[0] == "profile" and request_method == "GET":
-            return self.get_profile(request_body)
-        if _path[0] == "getLessons" and request_method == "GET":
-            return self.get_lesson_info(request_body)
-        if _path[0] == "lessonData" and request_method == "GET":
-            return self.get_lesson_data(request_body)
-        if _path[0] == "coordinatorCourses" and request_method == "GET":
-            return self.coordinator_courses(request_body)
+        try:
+            return self.endpoints[(_path[0], request_method)](request_body)
+        except KeyError:
+            return {SUCCESS: False, REASON: "Undefined behaviour"}
 
-        # 2 End points, 1) of_id -> lessonNum, date, blurb
-        # of_id -> lesson_name, lesson_id, lesson_date
-        # of_id, lesson_num -> video_fp, transcript, questions_json
-        print(_path[0])
-
-        return {SUCCESS: False, REASON: "Undefined behaviour"}
 
     def handle_login_request(self, request_body):
         # Checks if id and password fields are in request
@@ -75,7 +62,6 @@ class API:
         password = request_body["password"]
 
         query = f"SELECT password FROM Users WHERE id == {id}"
-        print(query)
         res = self.db.query(query)
 
         # expected res = [(password)]
@@ -123,15 +109,12 @@ class API:
         JOIN Courses ON Offerings.course_id = Courses.id
         WHERE Offerings.year = {year} AND Offerings.semester = {semester} AND Courses.name = "{request_body.get("course_name")}"
         """
-        print(query)
         res = self.db.query(query)
-        print(f"res = {res}")
 
         if (not res) or (len(res) != 1) or res == [()]:
             return {SUCCESS: False, REASON: "Year and semester does not uniquely make an offering id."}
 
         [(offering_id,)] = res
-        print(f"{student_id}, {offering_id}.")
         return self.enrol(student_id, offering_id)
 
 
@@ -233,26 +216,15 @@ class API:
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Organisations ON Organisations.id=Courses.org_id
+		OUTER LEFT JOIN Enrolments ON Enrolments.offering_id = Offerings.id
         WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
 	        FROM Enrolments
 	        WHERE {id} == Enrolments.student_id
-        )
+			)
         """
         res = self.db.query(query)
         print(res)
-
-        """
-        [
-            {
-                course_name: Arya,
-
-            },
-            {
-
-            }
-        ]
-        """
 
         col = ["course_name", "description", "year", "semester", "offering_id",
                "coordinator_firstname", "coordinator_lastname", "organisation_name"]
@@ -284,7 +256,6 @@ class API:
         # return {SUCCESS: True}
 
     def get_currently_enrolled(self, request_body):
-        print(request_body)
         if "student_id" not in request_body:
             return {SUCCESS: False, REASON: "ID not found in the request."}
 
@@ -292,8 +263,6 @@ class API:
             id = int(request_body["student_id"])
         except ValueError:
             return {SUCCESS: False, REASON: "ID not of integer form."}
-
-        print(f"Student id = {id}")
 
         if not self.student_in_db(id):
             return {SUCCESS: False, REASON: "Student id not found in database."}
@@ -311,7 +280,6 @@ class API:
                 "course_name", "course_desc", "offering_id"]
         _res = list()
         for row in res:
-            print(f"cols = {cols}, row = {row}, adding = {dict(zip(cols, row))}")
             _res.append(dict(zip(cols, row)))
         return {SUCCESS: True, DATA: _res}
 
@@ -418,11 +386,9 @@ class API:
 
     def generate_course_data(self, query):
         res = []
-        print(query)
         for offering_id, course_name, course_desc, blurb, lesson_num, date in query:
             found = False
             for course_info in res:
-                print("appending")
                 if course_info["offering_id"] == offering_id:
                     found = True
                     course_info["lessons"].append({
@@ -431,9 +397,6 @@ class API:
                         "blurb": blurb
                     })
             if not found:
-                print("making")
-                print(f"blurb = {blurb}, type = {type(blurb)}")
-
                 if blurb is None:
                     lesson_data = []
                 else:
