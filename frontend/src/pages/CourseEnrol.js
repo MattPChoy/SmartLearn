@@ -247,7 +247,7 @@ function CourseEnrol() {
       </Button>
       <br />
       <br />
-      <DataTable data={enrolled} />
+      <DataTable data={enrolled} student_id={sid}/>
     </div>
   );
 }
