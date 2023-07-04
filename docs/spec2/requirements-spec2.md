@@ -223,19 +223,29 @@ The user logs into the system and authenticates themselves to use the other func
 #### 7.1.6.2 - Class Design
 > Components this page uses.
 
-| Class Name | Description                                      |
-| ---------- | ------------------------------------------------ |
-| useState   | State variable hook for JS functional components |
-
+| Class Name   | Description                                          |
+| ------------ | ---------------------------------------------------- |
+| useState     | State variable hook for JS functional components     |
+| useNavigate  | Allows the user to be redirected to a different page |
+| useAuth      | Custom authentication global state variable          |
+| MDBBth       | Bootstrap button component                           |
+| MDBContainer | Bootstrap container component                        |
+| MDBCard      | Bootstrap card component                             |
+| MDBCardBody  | Bootstrap card body component                        |
+| MDBCardTitle | Bootstrap card title component                       |
+| MDBRow       | Bootstrap row component                              |
+| MDBCol       | Bootstrap column component                           |
+| MDBInput     | Bootstrap input component                            |
+| MDBCheckbox  | Bootstrap checkbox component                         |
 
 
 ### 7.1.6.3 - Database Design
-| Table Name | Description |
-| ---------- | ----------- |
-|            |             |
+| Table Name | Description                        |
+| ---------- | ---------------------------------- |
+| Users      | The table containing all user data |
 
 
-## 7.2 - Log-In Page
+## 7.2 - View Video Page
 
 ### 7.2.1 Functional Description
 > A one-sentence description of the feature
