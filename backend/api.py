@@ -28,7 +28,7 @@ class API:
             ("register", POST): self.register,
             ("availableCourses", GET): self.get_available_courses,
             ("currentlyEnrolled", GET): self.get_currently_enrolled,
-            ("enrol", POST): self.enrol,
+            ("enrol", POST): self.handle_enrol,
             ("unenrol", POST): self.unenrol,
             ("profile", GET): self.get_profile,
             ("getLessons", GET): self.get_lesson_info,
