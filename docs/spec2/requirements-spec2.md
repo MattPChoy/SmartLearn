@@ -103,6 +103,11 @@ Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we
     <img alt="See docs/spec2/images/technicalarchitecture.draw.io.png" src="./images/technicalarchitecture.drawio.png" style="max-width:70%;">
 </figure>
 
+## 4.3 Deployable Architecture
+<figure id="1" style="display:flex;justify-content:center;">
+<img src="../architecture.png">
+</figure>
+
 ## 4.3 - Deployable architecture
 
 ## 4.4 Related system integration relationship
