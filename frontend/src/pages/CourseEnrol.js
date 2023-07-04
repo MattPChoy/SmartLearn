@@ -19,6 +19,7 @@ function CourseEnrol() {
   const [courseConfirmationShow, setCourseConfirmationShow] = useState(false);
   const [courses, setCourses] = useState([]);
   const [enrolled, setEnrolled] = useState([]);
+  const [enrolledCourse, setEnrolledCourse] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedSemester, setSelectedSemester] = useState("");
@@ -115,7 +116,9 @@ function CourseEnrol() {
         .then((response) => response.json())
         .then((res) => {
           if (res.success === true) {
-            console.log(res.data);
+            // console.log(res.data);
+            setEnrolledCourse(res.data)
+            console.log(enrolledCourse)
           } else {
             console.log(res.reason);
           }
@@ -247,7 +250,7 @@ function CourseEnrol() {
       </Button>
       <br />
       <br />
-      <DataTable data={enrolled} student_id={sid}/>
+      <DataTable data={enrolledCourse} student_id={sid}/>
     </div>
   );
 }

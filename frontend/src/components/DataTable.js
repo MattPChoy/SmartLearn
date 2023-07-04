@@ -26,7 +26,7 @@ function DataTable({ data, studet_id }) {
       {data.map((courseList, index) => (
         <tr key={index}>
           <td>{courseList.course_name}</td>
-          <td>{courseList.description}</td>
+          <td>{courseList.course_desc}</td>
           <td>{`${courseList.coordinator_firstname} ${courseList.coordinator_lastname}`}</td>
           <td>{`Semester ${courseList.semester}-${courseList.year}`}</td>
           <td>
