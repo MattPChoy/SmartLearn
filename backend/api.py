@@ -216,13 +216,15 @@ class API:
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Organisations ON Organisations.id=Courses.org_id
+		OUTER LEFT JOIN Enrolments ON Enrolments.offering_id = Offerings.id
         WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
 	        FROM Enrolments
 	        WHERE {id} == Enrolments.student_id
-        )
+			)
         """
         res = self.db.query(query)
+        print(res)
 
         col = ["course_name", "description", "year", "semester", "offering_id",
                "coordinator_firstname", "coordinator_lastname", "organisation_name"]

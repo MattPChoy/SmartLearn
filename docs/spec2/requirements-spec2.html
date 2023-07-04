@@ -352,8 +352,235 @@ Operating system: Linux</p>
 <h2 dir="auto" id="62-internal-interface">6.2 Internal interface</h2>
 <p dir="auto">The internal interface of the attendance system is designed to facilitate seamless communication between the front-end application module and the back-end service. This interaction is achieved through REST APIs, which establish a structured and standardized approach for data exchange.</p>
 <p dir="auto">By utilizing this internal interface access mode, the system achieves a clear separation and decoupling of front-end and back-end components. This architectural design promotes modularity, flexibility, and maintainability, allowing for independent development and updates of both the front and back-end aspects of the system.</p>
-<h1 dir="auto" id="7-detailed-design">7 Detailed design</h1>
-<h2 dir="auto" id="71">7.1</h2>
+<h1 dir="auto" id="7-detailed-design">7 Detailed Design</h1>
+<h2 dir="auto" id="71---log-in-page">7.1 - Log-In Page</h2>
+<h3 dir="auto" id="711-functional-description">7.1.1 Functional Description</h3>
+<blockquote dir="auto">
+<p dir="auto">A one-sentence description of the feature</p>
+</blockquote>
+<p dir="auto">The user logs into the system and authenticates themselves to use the other functionality on the site.</p>
+<h3 dir="auto" id="712---interface-design">7.1.2 - Interface Design</h3>
+<div  dir="auto" ></div>
+<figure>
+    <img src="./../screens/login.png" style="max-width:70%;">
+</figure>
+<h3 dir="auto" id="713---logical-process">7.1.3 - Logical Process</h3>
+<blockquote dir="auto">
+<p dir="auto">Sentences explaining the flow of using the UI</p>
+</blockquote>
+<ol dir="auto">
+<li dir="auto">The user navigates to the site.</li>
+<li dir="auto">The user enters their user id into the username field.</li>
+<li dir="auto">The user enters their password in the password field.</li>
+<li dir="auto">The user presses the &quot;Sign in&quot; button&quot;</li>
+</ol>
+<h3 dir="auto" id="714---entry">7.1.4 - Entry</h3>
+<ul dir="auto">
+<li dir="auto">What the user enters into the UI</li>
+</ul>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Name</th>
+<th>Type</th>
+<th>Check Rules</th>
+<th>Control Type</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>Username</td>
+<td>integer</td>
+<td>Required by default</td>
+<td>nothing</td>
+<td>Login form</td>
+</tr>
+<tr dir="auto">
+<td>Password</td>
+<td>string</td>
+<td>Required by default</td>
+<td>alphanumeric</td>
+<td>Login form</td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="715---output-item">7.1.5 - Output Item</h3>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>Success</td>
+<td>Boolean</td>
+<td>A boolean indicating whether the user has successfully authenticated themselves into the system</td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="716---program-implementation-design">7.1.6 - Program Implementation Design</h3>
+<h4 dir="auto" id="7161---package-design">7.1.6.1 - Package Design</h4>
+<blockquote dir="auto">
+<p dir="auto">Imports</p>
+</blockquote>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Package Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>mdb-react-ui-kit</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 dir="auto" id="7162---class-design">7.1.6.2 - Class Design</h4>
+<blockquote dir="auto">
+<p dir="auto">Components this page uses.</p>
+</blockquote>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Class Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="7163---database-design">7.1.6.3 - Database Design</h3>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Table Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 dir="auto" id="72---log-in-page">7.2 - Log-In Page</h2>
+<h3 dir="auto" id="721-functional-description">7.2.1 Functional Description</h3>
+<blockquote dir="auto">
+<p dir="auto">A one-sentence description of the feature</p>
+</blockquote>
+<h3 dir="auto" id="722---interface-design">7.2.2 - Interface Design</h3>
+<div  dir="auto" ></div>
+<figure>
+    <img src="./../screens/login.png" style="max-width:70%;">
+</figure>
+<h3 dir="auto" id="723---logical-process">7.2.3 - Logical Process</h3>
+<blockquote dir="auto">
+<p dir="auto">Sentences explaining the flow of using the UI</p>
+</blockquote>
+<h3 dir="auto" id="724---entry">7.2.4 - Entry</h3>
+<ul dir="auto">
+<li dir="auto">What the user enters into the UI</li>
+</ul>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Name</th>
+<th>Type</th>
+<th>Check Rules</th>
+<th>Control Type</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="725---output-item">7.2.5 - Output Item</h3>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="726---program-implementation-design">7.2.6 - Program Implementation Design</h3>
+<h4 dir="auto" id="7261---package-design">7.2.6.1 - Package Design</h4>
+<blockquote dir="auto">
+<p dir="auto">Imports</p>
+</blockquote>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Package Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 dir="auto" id="7262---class-design">7.2.6.2 - Class Design</h4>
+<blockquote dir="auto">
+<p dir="auto">Components this page uses.</p>
+</blockquote>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Class Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 dir="auto" id="7263---database-design">7.2.6.3 - Database Design</h3>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Table Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h1 dir="auto" id="references">References</h1>
 <p dir="auto">Nielsen, J., &amp; Molich, R. (1990). Ten Usability Heuristics. In: Nielsen Norman Group. [Online] Available at: <a href="https://www.nngroup.com/articles/ten-usability-heuristics/">https://www.nngroup.com/articles/ten-usability-heuristics/</a> (Accessed: 30 June 2023).</p>
 

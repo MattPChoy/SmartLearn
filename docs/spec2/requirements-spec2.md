@@ -171,16 +171,128 @@ The internal interface of the attendance system is designed to facilitate seamle
 
 By utilizing this internal interface access mode, the system achieves a clear separation and decoupling of front-end and back-end components. This architectural design promotes modularity, flexibility, and maintainability, allowing for independent development and updates of both the front and back-end aspects of the system.
 
-# 7 Detailed design
+# 7 Detailed Design
 
-## 7.2 View current course
+## 7.1 - Log-In Page
 
-### 7.2.1 Function description
+### 7.1.1 Functional Description
+> A one-sentence description of the feature
+
+The user logs into the system and authenticates themselves to use the other functionality on the site.
+
+### 7.1.2 - Interface Design
+<figure>
+    <img src="./../screens/login.png" style="max-width:70%;">
+</figure>
+
+### 7.1.3 - Logical Process
+> Sentences explaining the flow of using the UI
+
+1. The user navigates to the site.
+2. The user enters their user id into the username field.
+3. The user enters their password in the password field.
+4. The user presses the "Sign in" button"
+
+
+### 7.1.4 - Entry
+- What the user enters into the UI
+
+| Name     | Type    | Check Rules         | Control Type | Source     |
+| -------- | ------- | ------------------- | ------------ | ---------- |
+| Username | integer | Required by default | nothing      | Login form |
+| Password | string  | Required by default | alphanumeric | Login form |
+
+### 7.1.5 - Output Item
+
+| Name    | Type    | Description                                                                                     |
+| ------- | ------- | ----------------------------------------------------------------------------------------------- |
+| Success | Boolean | A boolean indicating whether the user has successfully authenticated themselves into the system |
+
+### 7.1.6 - Program Implementation Design
+
+#### 7.1.6.1 - Package Design
+> Imports
+
+| Package Name     | Description                                     |
+| ---------------- | ----------------------------------------------- |
+| mdb-react-ui-kit | JavaScript Bootstrap                            |
+| AuthContext      | Custom context to save user ID across all pages |
+| react            | React library                                   |
+| react-router-dom | React library for routing                       |
+
+#### 7.1.6.2 - Class Design
+> Components this page uses.
+
+| Class Name | Description                                      |
+| ---------- | ------------------------------------------------ |
+| useState   | State variable hook for JS functional components |
+
+
+
+### 7.1.6.3 - Database Design
+| Table Name | Description |
+| ---------- | ----------- |
+|            |             |
+
+
+## 7.2 - Log-In Page
+
+### 7.2.1 Functional Description
+> A one-sentence description of the feature
+
+### 7.2.2 - Interface Design
+<figure>
+    <img src="./../screens/login.png" style="max-width:70%;">
+</figure>
+
+### 7.2.3 - Logical Process
+> Sentences explaining the flow of using the UI
+
+
+### 7.2.4 - Entry
+- What the user enters into the UI
+
+| Name | Type | Check Rules | Control Type | Source |
+| ---- | ---- | ----------- | ------------ | ------ |
+|      |      |             |              |        |
+
+### 7.2.5 - Output Item
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+|      |      |             |
+
+### 7.2.6 - Program Implementation Design
+
+#### 7.2.6.1 - Package Design
+> Imports
+
+| Package Name | Description |
+| ------------ | ----------- |
+|              |             |
+
+#### 7.2.6.2 - Class Design
+> Components this page uses.
+
+| Class Name | Description |
+| ---------- | ----------- |
+|            |             |
+
+
+
+### 7.2.6.3 - Database Design
+| Table Name | Description |
+| ---------- | ----------- |
+|            |             |
+
+## 7.3 View current course
+
+### 7.3.1 Function description
 Students can view their current enrolled courses and access their course details directly, the course actually shows a general description of the course.
 
-### 7.2.2 Interface design
+### 7.3.2 Interface design
 
-### 7.2.3 Logical process
+### 7.3.3 Logical process
 
 # References
 Nielsen, J., & Molich, R. (1990). Ten Usability Heuristics. In: Nielsen Norman Group. [Online] Available at: https://www.nngroup.com/articles/ten-usability-heuristics/ (Accessed: 30 June 2023).
