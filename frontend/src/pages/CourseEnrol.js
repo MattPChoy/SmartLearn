@@ -24,6 +24,7 @@ function CourseEnrol() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [foo, setfoo] = useState(0);
+  const sid = 1;
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -104,6 +105,24 @@ function CourseEnrol() {
       });
   }
 
+  function currentlyEnrolled() {
+    try {
+      const sid = 1;
+      fetch(`http://localhost:5000/api/currentlyEnrolled?student_id=${sid}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.success === true) {
+            console.log(res.data);
+          } else {
+            console.log(res.reason);
+          }
+        });
+    } catch (e) {}
+  }
+
   /** Submit button event and error handle*/
   const handleSubmit = async () => {
     if (
@@ -120,16 +139,17 @@ function CourseEnrol() {
             semester: selectedSemester,
             course_name: selectedCourse,
             year: selectedYear,
-            student_id: 3,
+            student_id: sid,
           }),
           headers: { "Content-Type": "application/json" },
         })
           .then((response) => response.json())
           .then((res) => {
             if (res.success === true) {
-              setSelectedCourse('')
               getSelectedDict();
               setfoo(foo + 1);
+              currentlyEnrolled();
+              setSelectedCourse("");
             } else {
               console.log(res.reason);
             }
@@ -145,7 +165,7 @@ function CourseEnrol() {
     async function fetchData() {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/availableCourses?student_id=${3}`,
+          `http://localhost:5000/api/availableCourses?student_id=${sid}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -153,9 +173,9 @@ function CourseEnrol() {
         );
         const resObj = await res.json();
         if (resObj.success === true) {
-          // console.log(resObj.data);
           setCourses(resObj.data);
           setLoading(false);
+          // console.log(resObj.data);
         }
       } catch (e) {
         console.log(e);
@@ -163,6 +183,10 @@ function CourseEnrol() {
     }
     fetchData();
   }, [foo]);
+
+  function onlyUnique(value, index, array) {
+    return array.indexOf(value) === index;
+  }
 
   /** Create page components */
   return loading ? (
@@ -177,7 +201,7 @@ function CourseEnrol() {
         className="w-100"
         disablePortal
         id="combo-box-demo"
-        options={courses.map((course) => course.course_name)}
+        options={(courses.map((course) => course.course_name)).filter(onlyUnique)}
         value={selectedCourse}
         onInputChange={(e, n) => setSelectedCourse(n)}
         sx={{ width: 300 }}
@@ -215,7 +239,7 @@ function CourseEnrol() {
               </MenuItem>
             ))}
         </Select>
-      </FormControl>{" "}
+      </FormControl>
       <br />
       <br />
       <Button className="btn btn-primary w-100" onClick={handleSubmit}>
@@ -223,7 +247,7 @@ function CourseEnrol() {
       </Button>
       <br />
       <br />
-      <DataTable data={enrolled} />
+      <DataTable data={enrolled} student_id={sid}/>
     </div>
   );
 }
