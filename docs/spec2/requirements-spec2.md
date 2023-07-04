@@ -173,7 +173,14 @@ By utilizing this internal interface access mode, the system achieves a clear se
 
 # 7 Detailed design
 
-## 7.1 
+## 7.2 View current course
+
+### 7.2.1 Function description
+Students can view their current enrolled courses and access their course details directly, the course actually shows a general description of the course.
+
+### 7.2.2 Interface design
+
+### 7.2.3 Logical process
 
 # References
 Nielsen, J., & Molich, R. (1990). Ten Usability Heuristics. In: Nielsen Norman Group. [Online] Available at: https://www.nngroup.com/articles/ten-usability-heuristics/ (Accessed: 30 June 2023).
