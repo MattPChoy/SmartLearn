@@ -28,7 +28,7 @@ class API:
             ("register", POST): self.register,
             ("availableCourses", GET): self.get_available_courses,
             ("currentlyEnrolled", GET): self.get_currently_enrolled,
-            ("enrol", POST): self.enrol,
+            ("enrol", POST): self.handle_enrol,
             ("unenrol", POST): self.unenrol,
             ("profile", GET): self.get_profile,
             ("getLessons", GET): self.get_lesson_info,
@@ -173,13 +173,6 @@ class API:
         return {SUCCESS: True}
 
     def get_courses(self, request_body):
-        # res = self.db.query(f"SELECT Offerings.year, Offerings.semester, Courses.name, Coordinators.firstname, Coordinators.lastname FROM Enrolments \
-        #     JOIN Users ON Enrolments.student_id=Users.id \
-        #     JOIN Offerings on Offerings.id=Enrolments.offering_id \
-        #     JOIN Courses on Courses.id=Offerings.course_id \
-        #     JOIN Coordinators on Coordinators.id=Offerings.coordinator_id \
-        #     WHERE Enrolments.student_id={request_body['student_id']}")
-
         if "student_id" not in request_body:
             return {SUCCESS: False, REASON: "Missing student_id field."}
 
@@ -197,7 +190,6 @@ class API:
         col_names = ["year", "semester", "coordinator_firstname", "coordinator_lastname"]
         for row in res:
             result.append(dict(zip(col_names, row)))
-
         return {SUCCESS: True, DATA: result}
 
     def get_available_courses(self, request_body):
