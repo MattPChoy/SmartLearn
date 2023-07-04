@@ -28,7 +28,7 @@ class API:
             ("register", POST): self.register,
             ("availableCourses", GET): self.get_available_courses,
             ("currentlyEnrolled", GET): self.get_currently_enrolled,
-            ("enrol", POST): self.handle_enrol,
+            ("enrol", POST): self.enrol,
             ("unenrol", POST): self.unenrol,
             ("profile", GET): self.get_profile,
             ("getLessons", GET): self.get_lesson_info,
@@ -216,13 +216,15 @@ class API:
         FROM Offerings
         JOIN Courses ON Offerings.course_id=Courses.id
         JOIN Organisations ON Organisations.id=Courses.org_id
-        WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.course_id NOT IN (
+		OUTER LEFT JOIN Enrolments ON Enrolments.offering_id = Offerings.id
+        WHERE ((Offerings.year = {CURR_YEAR} AND Offerings.semester >= {CURR_SEMESTER}) OR Offerings.year > {CURR_YEAR}) AND Offerings.id NOT IN (
 	        SELECT Enrolments.offering_id
 	        FROM Enrolments
 	        WHERE {id} == Enrolments.student_id
-        )
+			)
         """
         res = self.db.query(query)
+        print(res)
 
         col = ["course_name", "description", "year", "semester", "offering_id",
                "coordinator_firstname", "coordinator_lastname", "organisation_name"]
