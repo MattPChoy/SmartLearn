@@ -295,7 +295,14 @@ The user logs into the system and authenticates themselves to use the other func
 | ---------- | ----------- |
 |            |             |
 
-  
+## 7.3 View current course
+
+### 7.3.1 Function description
+Students can view their current enrolled courses and access their course details directly, the course actually shows a general description of the course.
+
+### 7.3.2 Interface design
+
+### 7.3.3 Logical process
 
 # References
 Nielsen, J., & Molich, R. (1990). Ten Usability Heuristics. In: Nielsen Norman Group. [Online] Available at: https://www.nngroup.com/articles/ten-usability-heuristics/ (Accessed: 30 June 2023).
