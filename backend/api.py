@@ -28,7 +28,7 @@ class API:
             ("register", POST): self.register,
             ("availableCourses", GET): self.get_available_courses,
             ("currentlyEnrolled", GET): self.get_currently_enrolled,
-            ("enrol", POST): self.handle_enrol,
+            ("enrol", POST): self.enrol,
             ("unenrol", POST): self.unenrol,
             ("profile", GET): self.get_profile,
             ("getLessons", GET): self.get_lesson_info,
@@ -128,7 +128,6 @@ class API:
         if self.is_enrolled(student_id, offering_id):
             return {SUCCESS: False, REASON: "Student is already enrolled."}
 
-        print(f'''INSERT INTO Enrolments VALUES({student_id}, {offering_id})''')
         self.db.add(
             f'''INSERT INTO Enrolments VALUES({student_id}, {offering_id})''', save=True)
         return {SUCCESS: True}
