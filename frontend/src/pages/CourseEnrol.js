@@ -23,6 +23,7 @@ function CourseEnrol() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedSemester, setSelectedSemester] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+  const [foo, setfoo] = useState(0);
 
   const closeInvalidSem = () => setSemShow(false);
   const showInvalidSem = () => setSemShow(true);
@@ -94,6 +95,15 @@ function CourseEnrol() {
 
   function getAvaliableSemesters(course) {}
 
+  function getSelectedDict() {
+    console.log("enrollment successful");
+    courses
+      .filter((course) => course.course_name === selectedCourse)
+      .map((course) => {
+        return setEnrolled([...enrolled, course]);
+      });
+  }
+
   /** Submit button event and error handle*/
   const handleSubmit = async () => {
     if (
@@ -117,17 +127,15 @@ function CourseEnrol() {
           .then((response) => response.json())
           .then((res) => {
             if (res.success === true) {
-              console.log("enrollment successful");
+              setSelectedCourse('')
+              getSelectedDict();
+              setfoo(foo + 1);
             } else {
-              console.log(res.reason)
+              console.log(res.reason);
             }
           });
-        console.log(selectedSemester);
-        console.log(selectedCourse);
-        console.log(selectedYear);
-
       } catch (e) {
-        // console.log(e);
+        console.log(e);
       }
     }
   };
@@ -150,12 +158,11 @@ function CourseEnrol() {
           setLoading(false);
         }
       } catch (e) {
-        // console.log(e);
+        console.log(e);
       }
     }
-
     fetchData();
-  }, []);
+  }, [foo]);
 
   /** Create page components */
   return loading ? (
@@ -211,12 +218,12 @@ function CourseEnrol() {
       </FormControl>{" "}
       <br />
       <br />
-      <Button className="btn btn-dark w-100" onClick={handleSubmit}>
-        Sign away your life
+      <Button className="btn btn-primary w-100" onClick={handleSubmit}>
+        Kiss Shakes
       </Button>
       <br />
       <br />
-      {/* <DataTable data={enrolled} /> */}
+      <DataTable data={enrolled} />
     </div>
   );
 }

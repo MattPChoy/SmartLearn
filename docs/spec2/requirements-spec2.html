@@ -24,6 +24,7 @@
 
 </header>
 <main>
+<h1 dir="auto" id="smartclass-requirement-specification-2">SmartClass: Requirement Specification 2</h1>
 <h1 dir="auto" id="1-introduction">1 Introduction</h1>
 <h2 dir="auto" id="11-project-objectives">1.1 Project Objectives</h2>
 <p dir="auto">Currently, online teaching has emerged as the most popular method of instruction. The project's overarching goals encompass the following objectives:</p>
@@ -96,37 +97,6 @@ The lessons within the SmartClass application can be structured using a &quot;kn
 </ol>
 <h2 dir="auto" id="24-design-principles">2.4 Design principles</h2>
 <p dir="auto">Our software will adhere to Nielsen's Heuristic Design Heuristics. Here's how we will incorporate each principle:</p>
-<h1 dir="auto" id="3-development-and-operation-environment">3. Development and operation environment</h1>
-<table dir="auto">
-<thead dir="auto">
-<tr dir="auto">
-<th>Server</th>
-<th>Main Configuration</th>
-<th>OS</th>
-<th>Purpose</th>
-<th>Middleware</th>
-<th>Number</th>
-</tr>
-</thead>
-<tbody dir="auto">
-<tr dir="auto">
-<td>PC Server</td>
-<td>4C/16GB, 100GB</td>
-<td>Linux</td>
-<td>Database</td>
-<td>Nothing</td>
-<td>1</td>
-</tr>
-<tr dir="auto">
-<td>PC Server</td>
-<td>4C/16GB, 1000GB</td>
-<td>Linux</td>
-<td>Application</td>
-<td>Nothing</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
 <ol dir="auto">
 <li dir="auto">
 <p dir="auto">Visibility of System: Our system will provide users with timely feedback to keep them informed. We will achieve this by highlighting the user's selected object and providing clear indicators during website loading.</p>
@@ -159,7 +129,7 @@ The lessons within the SmartClass application can be structured using a &quot;kn
 <p dir="auto">Help and documentation: While we aim to keep our application intuitive enough to minimize reliance on help and documentation, we will provide this document as a resource. Additionally, users can access direct help from our team through workshops and other channels.</p>
 </li>
 </ol>
-<h1 dir="auto" id="3-development-and-operation-environment-1">3 Development and operation environment</h1>
+<h1 dir="auto" id="3-development-and-operation-environment">3 Development and operation environment</h1>
 <table dir="auto">
 <thead dir="auto">
 <tr dir="auto">
@@ -192,11 +162,20 @@ The lessons within the SmartClass application can be structured using a &quot;kn
 </table>
 <h1 dir="auto" id="4-overall-system-architecture">4 Overall system architecture</h1>
 <h2 dir="auto" id="41-functional-architecture">4.1 Functional architecture</h2>
+<div  dir="auto" ></div>
+<figcaption for="1"> <b>Figure 1</b>: Functional Architecture </figcaption>
+<figure id="1" style="display:flex;justify-content:center;">
+    <img alt="See docs/spec2/images/functionalarchitecture.draw.io.png" src="./images/functionalarchitecture.drawio.png" style="max-width:60%;">
+</figure>
 <h2 dir="auto" id="42-technical-architecture">4.2 Technical architecture</h2>
+<div  dir="auto" ></div>
+<figcaption for="2"> <b>Figure 2</b>: Technical Architecture </figcaption>
+<figure id="2" style="display:flex;justify-content:center;">
+    <img alt="See docs/spec2/images/technicalarchitecture.draw.io.png" src="./images/technicalarchitecture.drawio.png" style="max-width:60%;">
+</figure>
 <h2 dir="auto" id="43-deployable-architecture">4.3 Deployable architecture</h2>
 <h2 dir="auto" id="44-related-system-integration-relationship">4.4 Related system integration relationship</h2>
 <h3 dir="auto" id="441-student">4.4.1 Student</h3>
-<p dir="auto">AI education system (as student)</p>
 <table dir="auto">
 <thead dir="auto">
 <tr dir="auto">
@@ -322,7 +301,49 @@ Database: SQLite
 Operating system: Linux</p>
 </li>
 </ol>
-<h2 dir="auto" id="52-database-table-structure-description">5.2 Database table structure description</h2>
+<h2 dir="auto" id="52-database-naming-rules">5.2 Database naming rules</h2>
+<table dir="auto">
+<thead dir="auto">
+<tr dir="auto">
+<th>Structure</th>
+<th>Explanation</th>
+<th>Field</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody dir="auto">
+<tr dir="auto">
+<td>Alpha prefix, numeric suffix</td>
+<td>Typical structure for courseID</td>
+<td>courseID</td>
+<td>CSSE3880, CS50</td>
+</tr>
+<tr dir="auto">
+<td>date: YYYY-MM-DD</td>
+<td>SQLite limitation, no date type</td>
+<td>date</td>
+<td>2023-07-03</td>
+</tr>
+<tr dir="auto">
+<td>./{courseID}-YYYY-{semester}/lessonN</td>
+<td>location where files will be stored</td>
+<td>fp</td>
+<td>./COMP4500-2023-2/lesson4</td>
+</tr>
+<tr dir="auto">
+<td>alpha, '-'</td>
+<td>Users cannot add spaces to their first and last name, prevents SQL injection</td>
+<td>fname, sname</td>
+<td>McNeilly-Yu</td>
+</tr>
+</tbody>
+</table>
+<h2 dir="auto" id="53-database-table-structure-description">5.3 Database table structure description</h2>
+<div  dir="auto" ></div>
+<figcaption for="5"> <b>Figure 5</b>: ER diagram of database </figcaption>
+<figure id="5" style="display:flex;justify-content:center;">
+    <img alt="See docs/spec2/images/relationaldb.draw.io.png" src="./images/relationaldb.drawio.png" style="max-width:60%;">
+</figure>
 <h1 dir="auto" id="6-interface-design">6 Interface design</h1>
 <h2 dir="auto" id="61-external-interface">6.1 External interface</h2>
 <p dir="auto">The external interface of our system encompasses two main user roles:</p>
